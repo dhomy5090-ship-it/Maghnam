@@ -12,7 +12,7 @@
   <link id="pwaIconLink" rel="icon" type="image/png" href="" />
   <link id="pwaAppleTouchIcon" rel="apple-touch-icon" href="" />
   <link id="pwaManifestLink" rel="manifest" href="data:application/manifest+json,{}" />
-  <title>مغنم V2.1 | إدارة الحلال والأغنام</title>
+  <title>مغنم V2.3 | إدارة الحلال والأغنام</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-app-compat.js"></script>
@@ -214,8 +214,7 @@
         <button type="button" data-tab="herd" class="nav-tab tab-inactive px-3.5 py-1.5 rounded-xl border text-xs lg:text-sm font-bold">الأغنام والحلال</button>
         <button type="button" data-tab="health" class="nav-tab tab-inactive px-3.5 py-1.5 rounded-xl border text-xs lg:text-sm font-bold">الصحة والتطعيمات</button>
         <button type="button" data-tab="breeding" class="nav-tab tab-inactive px-3.5 py-1.5 rounded-xl border text-xs lg:text-sm font-bold">الحمل والولادة</button>
-        <button type="button" data-tab="feed" class="nav-tab tab-inactive px-3.5 py-1.5 rounded-xl border text-xs lg:text-sm font-bold">التغذية والأعلاف</button>
-        <button type="button" data-tab="water" class="nav-tab tab-inactive px-3.5 py-1.5 rounded-xl border text-xs lg:text-sm font-bold">إدارة المياه</button>
+        <button type="button" data-tab="feedwater" class="nav-tab tab-inactive px-3.5 py-1.5 rounded-xl border text-xs lg:text-sm font-bold">التغذية والمياه</button>
         <button type="button" data-tab="weights" class="nav-tab tab-inactive px-3.5 py-1.5 rounded-xl border text-xs lg:text-sm font-bold">التسمين والأوزان</button>
         <button type="button" data-tab="calendar" class="nav-tab tab-inactive px-3.5 py-1.5 rounded-xl border text-xs lg:text-sm font-bold">التقويم</button>
       </div>
@@ -391,6 +390,7 @@
           <p class="text-sm text-gray-500">تسجيل الأرقام التعريفية، السلالة، الجنس، والأم والأب</p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
+          <button type="button" id="btnToggleHerdSelect" class="px-3.5 py-2.5 rounded-xl border border-gray-200 bg-white hover:bg-emerald-50 text-gray-800 text-sm font-bold transition">تحديد للتعديل</button>
           <button type="button" id="btnOpenBulkAnimal" class="px-4 py-2.5 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 text-sm font-bold">+ إضافة جماعية</button>
           <button type="button" id="btnOpenAddAnimal" class="btn-primary px-4 py-2.5 rounded-xl text-sm font-bold">+ إضافة رأس جديد</button>
         </div>
@@ -408,6 +408,18 @@
           <option value="أنثى">أنثى (رخل / شاة / عنز)</option>
           <option value="ذكر">ذكر (بهم / فحل / تيس)</option>
         </select>
+      </div>
+
+      <div id="herdBulkActionBar" class="hidden card-soft p-3 sm:p-3.5 bg-emerald-50/90 border-emerald-200 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <span id="herdSelectedCountBadge" class="px-3 py-1 rounded-xl bg-emerald-700 text-white text-xs font-extrabold">تم تحديد: 0</span>
+          <button type="button" id="btnHerdSelectAllVisible" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-emerald-100 text-emerald-900 border border-emerald-200 text-xs font-bold">تحديد الكل</button>
+          <button type="button" id="btnHerdClearSelection" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-gray-100 text-gray-700 border border-gray-200 text-xs font-bold">إلغاء التحديد</button>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" id="btnOpenBulkEditHerd" class="btn-primary px-3.5 py-1.5 rounded-xl text-xs font-extrabold">تعديل المحدد</button>
+          <button type="button" id="btnOpenBulkDeleteHerd" class="px-3.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold">حذف المحدد</button>
+        </div>
       </div>
 
       <div id="herdGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
@@ -461,66 +473,69 @@
       <div id="breedingList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
     </section>
 
-    <!-- قسم: التغذية والأعلاف -->
-    <section id="tab-feed" class="tab-section hidden space-y-4">
+    <!-- قسم: التغذية والأعلاف وإدارة المياه (قائمة موحدة) -->
+    <section id="tab-feedwater" class="tab-section hidden space-y-4">
       <div class="md:hidden">
         <button type="button" data-back-home="1" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-gray-200 text-sm font-bold text-gray-700 hover:bg-gray-50 shadow-sm">
           <svg class="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
           <span>العودة للرئيسية</span>
         </button>
       </div>
-      <div class="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 class="text-xl font-extrabold text-gray-900">التغذية والأعلاف</h2>
-          <p class="text-sm text-gray-500">إدارة نوعية وكميات الأعلاف وتواريخ الصرف والاستهلاك</p>
+
+      <div class="card-soft p-1.5 grid grid-cols-2 gap-1.5">
+        <button type="button" id="fwSubBtnFeed" data-fw-sub="feed" class="py-2.5 px-3 rounded-xl bg-emerald-700 text-white text-xs sm:text-sm font-extrabold shadow-sm transition">التغذية والأعلاف</button>
+        <button type="button" id="fwSubBtnWater" data-fw-sub="water" class="py-2.5 px-3 rounded-xl text-gray-600 hover:bg-gray-100 text-xs sm:text-sm font-bold transition">إدارة المياه</button>
+      </div>
+
+      <!-- فرع: التغذية والأعلاف -->
+      <div id="fwSubFeed" class="space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-xl font-extrabold text-gray-900">التغذية والأعلاف</h2>
+            <p class="text-sm text-gray-500">إدارة نوعية وكميات الأعلاف وتواريخ الصرف والاستهلاك</p>
+          </div>
+          <button type="button" id="btnOpenAddFeed" class="btn-primary px-4 py-2.5 rounded-xl text-sm font-bold">+ تسجيل صرف أعلاف</button>
         </div>
-        <button type="button" id="btnOpenAddFeed" class="btn-primary px-4 py-2.5 rounded-xl text-sm font-bold">+ تسجيل صرف أعلاف</button>
-      </div>
 
-      <div class="card-soft overflow-x-auto">
-        <table class="w-full text-sm text-right">
-          <thead class="bg-gray-50 text-gray-600 border-b border-gray-200">
-            <tr>
-              <th class="px-4 py-3 font-bold">التاريخ</th>
-              <th class="px-4 py-3 font-bold">نوع العلف</th>
-              <th class="px-4 py-3 font-bold">الكمية</th>
-              <th class="px-4 py-3 font-bold">ملاحظات</th>
-              <th class="px-4 py-3 font-bold text-center">إجراء</th>
-            </tr>
-          </thead>
-          <tbody id="feedTableBody" class="divide-y divide-gray-100"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- قسم: إدارة المياه -->
-    <section id="tab-water" class="tab-section hidden space-y-4">
-      <div class="md:hidden">
-        <button type="button" data-back-home="1" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-gray-200 text-sm font-bold text-gray-700 hover:bg-gray-50 shadow-sm">
-          <svg class="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-          <span>العودة للرئيسية</span>
-        </button>
-      </div>
-      <div class="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 class="text-xl font-extrabold text-gray-900">إدارة المياه</h2>
-          <p class="text-sm text-gray-500">تسجيل مواعيد وكميات توريد المياه بانتظام</p>
+        <div class="card-soft overflow-x-auto">
+          <table class="w-full text-sm text-right">
+            <thead class="bg-gray-50 text-gray-600 border-b border-gray-200">
+              <tr>
+                <th class="px-4 py-3 font-bold">التاريخ</th>
+                <th class="px-4 py-3 font-bold">نوع العلف</th>
+                <th class="px-4 py-3 font-bold">الكمية</th>
+                <th class="px-4 py-3 font-bold">ملاحظات</th>
+                <th class="px-4 py-3 font-bold text-center">إجراء</th>
+              </tr>
+            </thead>
+            <tbody id="feedTableBody" class="divide-y divide-gray-100"></tbody>
+          </table>
         </div>
-        <button type="button" id="btnOpenAddWater" class="btn-primary px-4 py-2.5 rounded-xl text-sm font-bold">+ تسجيل توريد مياه</button>
       </div>
 
-      <div class="card-soft overflow-x-auto">
-        <table class="w-full text-sm text-right">
-          <thead class="bg-gray-50 text-gray-600 border-b border-gray-200">
-            <tr>
-              <th class="px-4 py-3 font-bold">تاريخ التوريد</th>
-              <th class="px-4 py-3 font-bold">الكمية</th>
-              <th class="px-4 py-3 font-bold">المصدر / التفاصيل</th>
-              <th class="px-4 py-3 font-bold text-center">إجراء</th>
-            </tr>
-          </thead>
-          <tbody id="waterTableBody" class="divide-y divide-gray-100"></tbody>
-        </table>
+      <!-- فرع: إدارة المياه -->
+      <div id="fwSubWater" class="hidden space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-xl font-extrabold text-gray-900">إدارة المياه</h2>
+            <p class="text-sm text-gray-500">تسجيل مواعيد وكميات توريد المياه بانتظام</p>
+          </div>
+          <button type="button" id="btnOpenAddWater" class="btn-primary px-4 py-2.5 rounded-xl text-sm font-bold">+ تسجيل توريد مياه</button>
+        </div>
+
+        <div class="card-soft overflow-x-auto">
+          <table class="w-full text-sm text-right">
+            <thead class="bg-gray-50 text-gray-600 border-b border-gray-200">
+              <tr>
+                <th class="px-4 py-3 font-bold">تاريخ التوريد</th>
+                <th class="px-4 py-3 font-bold">الكمية</th>
+                <th class="px-4 py-3 font-bold">المصدر / التفاصيل</th>
+                <th class="px-4 py-3 font-bold text-center">إجراء</th>
+              </tr>
+            </thead>
+            <tbody id="waterTableBody" class="divide-y divide-gray-100"></tbody>
+          </table>
+        </div>
       </div>
     </section>
 
@@ -610,27 +625,31 @@
     </section>
   </main>
 
-  <!-- شريط التنقل السفلي المريح للجوال -->
-  <nav class="md:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 backdrop-blur border-t border-gray-200 px-1.5 pt-1.5 safe-bottom-nav grid grid-cols-5 gap-1 shadow-lg">
-    <button type="button" data-mob-tab="home" class="mob-nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-emerald-700 bg-emerald-50 font-extrabold text-[11px] gap-0.5 transition">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-      <span>الرئيسية</span>
+  <!-- شريط التنقل السفلي المريح للجوال (٦ خانات) -->
+  <nav class="md:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 backdrop-blur border-t border-gray-200 px-1 pt-1.5 safe-bottom-nav grid grid-cols-6 gap-0.5 shadow-lg">
+    <button type="button" data-mob-tab="home" class="mob-nav-btn flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl text-emerald-700 bg-emerald-50 font-extrabold text-[10px] gap-0.5 transition">
+      <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      <span class="truncate w-full text-center">الرئيسية</span>
     </button>
-    <button type="button" data-mob-tab="herd" class="mob-nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-gray-500 font-bold text-[11px] gap-0.5 transition">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-      <span>الحلال</span>
+    <button type="button" data-mob-tab="herd" class="mob-nav-btn flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl text-gray-500 font-bold text-[10px] gap-0.5 transition">
+      <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+      <span class="truncate w-full text-center">الحلال</span>
     </button>
-    <button type="button" data-mob-tab="health" class="mob-nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-gray-500 font-bold text-[11px] gap-0.5 transition">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-      <span>الصحة</span>
+    <button type="button" data-mob-tab="health" class="mob-nav-btn flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl text-gray-500 font-bold text-[10px] gap-0.5 transition">
+      <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+      <span class="truncate w-full text-center">الصحة</span>
     </button>
-    <button type="button" data-mob-tab="breeding" class="mob-nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-gray-500 font-bold text-[11px] gap-0.5 transition">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-      <span>الحمل</span>
+    <button type="button" data-mob-tab="breeding" class="mob-nav-btn flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl text-gray-500 font-bold text-[10px] gap-0.5 transition">
+      <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <span class="truncate w-full text-center">الحمل</span>
     </button>
-    <button type="button" data-mob-tab="weights" class="mob-nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-gray-500 font-bold text-[11px] gap-0.5 transition">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
-      <span>الأوزان</span>
+    <button type="button" data-mob-tab="feedwater" class="mob-nav-btn flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl text-gray-500 font-bold text-[10px] gap-0.5 transition">
+      <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+      <span class="truncate w-full text-center">العلف والماء</span>
+    </button>
+    <button type="button" data-mob-tab="weights" class="mob-nav-btn flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl text-gray-500 font-bold text-[10px] gap-0.5 transition">
+      <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+      <span class="truncate w-full text-center">الأوزان</span>
     </button>
   </nav>
 
@@ -669,12 +688,25 @@
               <button type="button" id="btnSaveCustomBreed" class="px-3 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shrink-0">حفظ</button>
             </div>
           </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-700 mb-1">الجنس / الفئة *</label>
-            <select id="animalGender" required class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm bg-white">
-              <option value="أنثى">أنثى (شاة / رخل / عنز)</option>
-              <option value="ذكر">ذكر (فحل / بهم / تيس)</option>
-            </select>
+          <div class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">الجنس / الفئة *</label>
+              <select id="animalGender" required class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm bg-white">
+                <option value="أنثى">أنثى (شاة / رخل / عنز)</option>
+                <option value="ذكر">ذكر (فحل / بهم / تيس)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">العمر (يحسب التاريخ تلقائياً)</label>
+              <div class="grid grid-cols-2 gap-1.5">
+                <input type="number" id="animalAgeVal" min="0" max="360" placeholder="مثال: 7" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm bg-white" />
+                <select id="animalAgeUnit" class="w-full px-2.5 py-2.5 rounded-xl border border-gray-200 text-sm bg-white">
+                  <option value="months">شهور</option>
+                  <option value="years">سنوات</option>
+                  <option value="days">أيام</option>
+                </select>
+              </div>
+            </div>
           </div>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -694,26 +726,33 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-emerald-50/60 p-3 rounded-xl border border-emerald-100">
           <div>
             <label class="block text-xs font-bold text-emerald-900 mb-1">رقم الأم</label>
-            <input type="text" id="animalMotherId" list="femaleIdList" placeholder="اختياري" class="w-full px-3 py-2 rounded-xl border border-emerald-200 text-sm bg-white" />
-            <datalist id="femaleIdList"></datalist>
+            <div class="relative flex items-center">
+              <input type="text" id="animalMotherId" placeholder="اختر أو اكتب الرقم (اختياري)" class="w-full pl-9 pr-3 py-2 rounded-xl border border-emerald-200 text-sm bg-white" />
+              <button type="button" data-pick-animal="animalMotherId" data-pick-gender="أنثى" data-pick-title="اختر رقم الأم" class="absolute left-1.5 w-7 h-7 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 flex items-center justify-center" title="اختيار من القائمة">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </button>
+            </div>
           </div>
           <div>
             <label class="block text-xs font-bold text-emerald-900 mb-1">رقم الأب</label>
-            <input type="text" id="animalFatherId" list="maleIdList" placeholder="اختياري" class="w-full px-3 py-2 rounded-xl border border-emerald-200 text-sm bg-white" />
-            <datalist id="maleIdList"></datalist>
+            <div class="relative flex items-center">
+              <input type="text" id="animalFatherId" placeholder="اختر أو اكتب الرقم (اختياري)" class="w-full pl-9 pr-3 py-2 rounded-xl border border-emerald-200 text-sm bg-white" />
+              <button type="button" data-pick-animal="animalFatherId" data-pick-gender="ذكر" data-pick-title="اختر رقم الأب" class="absolute left-1.5 w-7 h-7 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 flex items-center justify-center" title="اختيار من القائمة">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </button>
+            </div>
           </div>
         </div>
         <div>
           <label class="block text-xs font-bold text-gray-700 mb-1.5">لون علامة الأذن</label>
           <input type="hidden" id="animalTagColor" value="amber" />
-          <div class="flex flex-wrap items-center gap-2">
-            <button type="button" data-tag-color="amber" class="tag-color-btn w-8 h-8 rounded-full bg-amber-300 border-2 border-gray-900 ring-2 ring-amber-400/50" title="أصفر"></button>
-            <button type="button" data-tag-color="emerald" class="tag-color-btn w-8 h-8 rounded-full bg-emerald-300 border-2 border-white shadow" title="أخضر"></button>
-            <button type="button" data-tag-color="blue" class="tag-color-btn w-8 h-8 rounded-full bg-blue-300 border-2 border-white shadow" title="أزرق"></button>
-            <button type="button" data-tag-color="orange" class="tag-color-btn w-8 h-8 rounded-full bg-orange-300 border-2 border-white shadow" title="برتقالي"></button>
-            <button type="button" data-tag-color="rose" class="tag-color-btn w-8 h-8 rounded-full bg-rose-300 border-2 border-white shadow" title="أحمر / وردي"></button>
-            <button type="button" data-tag-color="gray" class="tag-color-btn w-8 h-8 rounded-full bg-gray-200 border-2 border-white shadow" title="أبيض / رمادي"></button>
-          </div>
+          <button type="button" id="btnPickAnimalColor" data-color-target="animalTagColor" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white hover:border-emerald-400 text-sm font-bold text-gray-900 flex items-center justify-between gap-2 transition">
+            <span class="flex items-center gap-2">
+              <span id="animalTagColorDot" class="w-5 h-5 rounded-full bg-amber-300 border border-gray-300 shrink-0"></span>
+              <span id="animalTagColorName">أصفر</span>
+            </span>
+            <span class="text-xs font-bold text-emerald-700 flex items-center gap-1">اختر اللون <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg></span>
+          </button>
         </div>
         <div>
           <label class="block text-xs font-bold text-gray-700 mb-1">ملاحظات إضافية</label>
@@ -775,22 +814,34 @@
           </div>
         </div>
 
-        <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1">تاريخ الميلاد / الشراء</label>
-          <input type="hidden" id="bulkBirthDate" /><button type="button" class="date-trigger-btn" data-date-for="bulkBirthDate"><span class="date-trigger-label text-gray-500">اختر التاريخ</span><svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></button>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">العمر للمجموعة (يحسب التاريخ)</label>
+            <div class="grid grid-cols-2 gap-1.5">
+              <input type="number" id="bulkAgeVal" min="0" max="360" placeholder="مثال: 6" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm bg-white" />
+              <select id="bulkAgeUnit" class="w-full px-2.5 py-2.5 rounded-xl border border-gray-200 text-sm bg-white">
+                <option value="months">شهور</option>
+                <option value="years">سنوات</option>
+                <option value="days">أيام</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">تاريخ الميلاد / الشراء</label>
+            <input type="hidden" id="bulkBirthDate" /><button type="button" class="date-trigger-btn" data-date-for="bulkBirthDate"><span class="date-trigger-label text-gray-500">اختر التاريخ</span><svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></button>
+          </div>
         </div>
 
         <div>
           <label class="block text-xs font-bold text-gray-700 mb-1.5">لون علامة الأذن للمجموعة</label>
           <input type="hidden" id="bulkTagColor" value="amber" />
-          <div class="flex flex-wrap items-center gap-2">
-            <button type="button" data-bulk-color="amber" class="bulk-color-btn w-8 h-8 rounded-full bg-amber-300 border-2 border-gray-900 ring-2 ring-amber-400/50" title="أصفر"></button>
-            <button type="button" data-bulk-color="emerald" class="bulk-color-btn w-8 h-8 rounded-full bg-emerald-300 border-2 border-white shadow" title="أخضر"></button>
-            <button type="button" data-bulk-color="blue" class="bulk-color-btn w-8 h-8 rounded-full bg-blue-300 border-2 border-white shadow" title="أزرق"></button>
-            <button type="button" data-bulk-color="orange" class="bulk-color-btn w-8 h-8 rounded-full bg-orange-300 border-2 border-white shadow" title="برتقالي"></button>
-            <button type="button" data-bulk-color="rose" class="bulk-color-btn w-8 h-8 rounded-full bg-rose-300 border-2 border-white shadow" title="أحمر / وردي"></button>
-            <button type="button" data-bulk-color="gray" class="bulk-color-btn w-8 h-8 rounded-full bg-gray-200 border-2 border-white shadow" title="أبيض / رمادي"></button>
-          </div>
+          <button type="button" id="btnPickBulkColor" data-color-target="bulkTagColor" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white hover:border-emerald-400 text-sm font-bold text-gray-900 flex items-center justify-between gap-2 transition">
+            <span class="flex items-center gap-2">
+              <span id="bulkTagColorDot" class="w-5 h-5 rounded-full bg-amber-300 border border-gray-300 shrink-0"></span>
+              <span id="bulkTagColorName">أصفر</span>
+            </span>
+            <span class="text-xs font-bold text-emerald-700 flex items-center gap-1">اختر اللون <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg></span>
+          </button>
         </div>
 
         <div id="bulkAutoSection" class="space-y-2.5 bg-emerald-50/60 p-3.5 rounded-xl border border-emerald-100">
@@ -798,14 +849,17 @@
             <div>
               <label class="block text-xs font-bold text-emerald-900 mb-1">يبدأ من رقم *</label>
               <input type="number" id="bulkStartNum" min="1" value="1" class="w-full px-3 py-2 rounded-xl border border-emerald-200 text-sm bg-white" />
+              <p class="text-[10px] text-emerald-700 mt-0.5">أول رقم في الترقيم</p>
             </div>
             <div>
               <label class="block text-xs font-bold text-emerald-900 mb-1">العدد *</label>
               <input type="number" id="bulkCount" min="1" max="2000" value="50" class="w-full px-3 py-2 rounded-xl border border-emerald-200 text-sm bg-white" />
+              <p class="text-[10px] text-emerald-700 mt-0.5">كم رأساً تريد إضافته</p>
             </div>
             <div>
               <label class="block text-xs font-bold text-emerald-900 mb-1">بادئة (اختياري)</label>
               <input type="text" id="bulkPrefix" placeholder="مثال: ض" class="w-full px-3 py-2 rounded-xl border border-emerald-200 text-sm bg-white" />
+              <p class="text-[10px] text-emerald-700 mt-0.5">حرف يسبق الرقم</p>
             </div>
           </div>
           <p id="bulkAutoPreview" class="text-xs font-bold text-emerald-800">سيتم إضافة ٥٠ رأساً (من 1 إلى 50)</p>
@@ -843,8 +897,11 @@
             <button type="button" data-health-scope="all" class="health-scope-btn py-2 px-2 rounded-xl border border-gray-200 bg-white text-gray-600 text-xs font-bold">القطيع كامل</button>
           </div>
           <input type="hidden" id="healthScopeMode" value="single" />
-          <div id="healthSingleBox">
-            <input type="text" id="healthAnimalId" list="allIdList" placeholder="اكتب رقم الرأس، مثال: 101" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm" />
+          <div id="healthSingleBox" class="relative flex items-center">
+            <input type="text" id="healthAnimalId" placeholder="اختر أو اكتب رقم الرأس، مثال: 101" class="w-full pl-10 pr-3 py-2.5 rounded-xl border border-gray-200 text-sm bg-white" />
+            <button type="button" data-pick-animal="healthAnimalId" data-pick-gender="" data-pick-title="اختر رقم الرأس" class="absolute left-1.5 w-8 h-8 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 flex items-center justify-center" title="اختيار من القائمة">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            </button>
           </div>
           <div id="healthGroupBox" class="hidden space-y-2.5 p-3 rounded-xl bg-gray-50 border border-gray-200">
             <div class="grid grid-cols-2 gap-2">
@@ -935,11 +992,21 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-bold text-gray-700 mb-1">رقم الأم *</label>
-            <input type="text" id="breedingMotherId" required list="femaleIdList" placeholder="رقم الشاة أو العنز" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm" />
+            <div class="relative flex items-center">
+              <input type="text" id="breedingMotherId" required placeholder="اختر أو اكتب رقم الأم" class="w-full pl-10 pr-3 py-2.5 rounded-xl border border-gray-200 text-sm bg-white" />
+              <button type="button" data-pick-animal="breedingMotherId" data-pick-gender="أنثى" data-pick-title="اختر رقم الأم" class="absolute left-1.5 w-8 h-8 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 flex items-center justify-center" title="اختيار من القائمة">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </button>
+            </div>
           </div>
           <div>
             <label class="block text-xs font-bold text-gray-700 mb-1">رقم الأب (الفحل)</label>
-            <input type="text" id="breedingFatherId" list="maleIdList" placeholder="اختياري" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm" />
+            <div class="relative flex items-center">
+              <input type="text" id="breedingFatherId" placeholder="اختياري" class="w-full pl-10 pr-3 py-2.5 rounded-xl border border-gray-200 text-sm bg-white" />
+              <button type="button" data-pick-animal="breedingFatherId" data-pick-gender="ذكر" data-pick-title="اختر رقم الأب" class="absolute left-1.5 w-8 h-8 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 flex items-center justify-center" title="اختيار من القائمة">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </button>
+            </div>
           </div>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1106,7 +1173,12 @@
         <input type="hidden" id="weightEditId" />
         <div>
           <label class="block text-xs font-bold text-gray-700 mb-1">الرقم التعريفي للرأس *</label>
-          <input type="text" id="weightAnimalId" required list="allIdList" placeholder="مثال: 103" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm" />
+          <div class="relative flex items-center">
+            <input type="text" id="weightAnimalId" required placeholder="اختر أو اكتب الرقم، مثال: 103" class="w-full pl-10 pr-3 py-2.5 rounded-xl border border-gray-200 text-sm bg-white" />
+            <button type="button" data-pick-animal="weightAnimalId" data-pick-gender="" data-pick-title="اختر رقم الرأس" class="absolute left-1.5 w-8 h-8 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 flex items-center justify-center" title="اختيار من القائمة">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+          </div>
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
@@ -1232,7 +1304,7 @@
           <div>
             <div class="flex items-center gap-2">
               <h3 class="text-base font-extrabold text-gray-900">إعدادات تطبيق مغنم</h3>
-              <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">V2.1</span>
+              <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">V2.3</span>
             </div>
             <p class="text-xs text-gray-500">المزامنة السحابية بين الجوالات والذكاء الاصطناعي</p>
           </div>
@@ -1333,6 +1405,104 @@
     </div>
   </div>
 
+  <!-- نافذة التعديل الجماعي للرؤوس المحددة -->
+  <div id="modalBulkEditHerd" class="modal-backdrop fixed inset-0 bg-black/45 z-50 hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white rounded-t-3xl sm:rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-xl max-h-[90vh] overflow-y-auto space-y-4">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+        <div>
+          <h3 class="text-lg font-extrabold text-gray-900">تعديل الرؤوس المحددة</h3>
+          <p id="bulkEditSubtitle" class="text-xs text-emerald-700 font-bold mt-0.5">سيتم تطبيق التعديلات على 0 رأس</p>
+        </div>
+        <button type="button" class="close-modal text-gray-400 hover:text-gray-700 text-2xl font-bold leading-none">&times;</button>
+      </div>
+      <form id="formBulkEditHerd" class="space-y-3.5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">النوع</label>
+            <select id="bulkEditType" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm bg-white">
+              <option value="">بدون تغيير</option>
+              <option value="ضأن">ضأن</option>
+              <option value="ماعز">ماعز</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">السلالة</label>
+            <select id="bulkEditBreed" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm bg-white"></select>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">الجنس / الفئة</label>
+            <select id="bulkEditGender" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm bg-white">
+              <option value="">بدون تغيير</option>
+              <option value="أنثى">أنثى (شاة / رخل / عنز)</option>
+              <option value="ذكر">ذكر (فحل / بهم / تيس)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">الحالة</label>
+            <select id="bulkEditStatus" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm bg-white">
+              <option value="">بدون تغيير</option>
+              <option value="موجود">موجود في الحلال</option>
+              <option value="تسمين">تحت التسمين</option>
+              <option value="مباع">مباع</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">العمر (اختياري - يحسب التاريخ)</label>
+            <div class="grid grid-cols-2 gap-1.5">
+              <input type="number" id="bulkEditAgeVal" min="0" max="360" placeholder="بدون تغيير" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm bg-white" />
+              <select id="bulkEditAgeUnit" class="w-full px-2.5 py-2.5 rounded-xl border border-gray-200 text-sm bg-white">
+                <option value="months">شهور</option>
+                <option value="years">سنوات</option>
+                <option value="days">أيام</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">تاريخ الميلاد / الشراء (اختياري)</label>
+            <input type="hidden" id="bulkEditBirthDate" /><button type="button" class="date-trigger-btn" data-date-for="bulkEditBirthDate"><span class="date-trigger-label text-gray-500">بدون تغيير</span><svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></button>
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="block text-xs font-bold text-gray-700">لون علامة الأذن</label>
+            <label class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 cursor-pointer">
+              <input type="checkbox" id="bulkEditChangeColor" class="accent-emerald-700 w-3.5 h-3.5" />
+              <span>تغيير اللون</span>
+            </label>
+          </div>
+          <input type="hidden" id="bulkEditTagColor" value="amber" />
+          <button type="button" id="btnPickBulkEditColor" data-color-target="bulkEditTagColor" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white hover:border-emerald-400 text-sm font-bold text-gray-900 flex items-center justify-between gap-2 transition">
+            <span class="flex items-center gap-2">
+              <span id="bulkEditTagColorDot" class="w-5 h-5 rounded-full bg-amber-300 border border-gray-300 shrink-0"></span>
+              <span id="bulkEditTagColorName">أصفر</span>
+            </span>
+            <span class="text-xs font-bold text-emerald-700 flex items-center gap-1">اختر اللون <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg></span>
+          </button>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" class="close-modal px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-bold text-gray-600">إلغاء</button>
+          <button type="submit" class="btn-primary px-6 py-2.5 rounded-xl text-sm font-bold">حفظ التعديلات</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- نافذة تأكيد حذف الرؤوس المحددة -->
+  <div id="modalConfirmBulkDelete" class="modal-backdrop fixed inset-0 bg-black/45 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-5 sm:p-6 shadow-xl text-center space-y-4">
+      <h3 class="text-lg font-extrabold text-gray-900">حذف الرؤوس المحددة؟</h3>
+      <p id="bulkDeleteConfirmText" class="text-sm text-gray-600">سيتم حذف الرؤوس المحددة من الحلال.</p>
+      <div class="flex justify-center gap-2 pt-1">
+        <button type="button" class="close-modal px-4 py-2 rounded-xl border border-gray-200 text-sm font-bold text-gray-600">إلغاء</button>
+        <button type="button" id="btnConfirmBulkDelete" class="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-bold">نعم، احذف المحدد</button>
+      </div>
+    </div>
+  </div>
+
   <!-- نافذة القوائم المنسدلة المخصصة بتصميم مغنم -->
   <div id="modalCustomSelect" class="fixed inset-0 bg-black/45 z-[60] hidden items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white rounded-t-3xl sm:rounded-2xl max-w-sm w-full p-4 sm:p-5 shadow-2xl border border-emerald-100 max-h-[80vh] flex flex-col">
@@ -1344,8 +1514,28 @@
     </div>
   </div>
 
-  <!-- قوائم الإكمال التلقائي المشتركة -->
-  <datalist id="allIdList"></datalist>
+  <!-- نافذة اختيار رقم الرأس المخصصة بتصميم مغنم -->
+  <div id="modalAnimalPicker" class="fixed inset-0 bg-black/45 z-[60] hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white rounded-t-3xl sm:rounded-2xl max-w-sm w-full p-4 sm:p-5 shadow-2xl border border-emerald-100 max-h-[80vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-3 shrink-0">
+        <h3 id="animalPickerTitle" class="text-base font-extrabold text-emerald-950">اختر رقم الرأس</h3>
+        <button type="button" id="btnCloseAnimalPicker" class="text-gray-400 hover:text-gray-700 text-2xl font-bold leading-none">&times;</button>
+      </div>
+      <input type="text" id="animalPickerSearch" placeholder="ابحث بالرقم أو السلالة..." class="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm mb-2.5 shrink-0" />
+      <div id="animalPickerList" class="overflow-y-auto space-y-1.5 flex-1"></div>
+    </div>
+  </div>
+
+  <!-- نافذة اختيار لون علامة الأذن المخصصة -->
+  <div id="modalTagColorPicker" class="fixed inset-0 bg-black/45 z-[60] hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white rounded-t-3xl sm:rounded-2xl max-w-sm w-full p-4 sm:p-5 shadow-2xl border border-emerald-100 max-h-[80vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-3 shrink-0">
+        <h3 class="text-base font-extrabold text-emerald-950">اختر لون علامة الأذن</h3>
+        <button type="button" id="btnCloseTagColorPicker" class="text-gray-400 hover:text-gray-700 text-2xl font-bold leading-none">&times;</button>
+      </div>
+      <div id="tagColorOptionsGrid" class="grid grid-cols-3 gap-2 overflow-y-auto"></div>
+    </div>
+  </div>
 
   <script>
     const STORAGE_KEY = 'halal_manager_data_v2';
@@ -1686,7 +1876,31 @@
       window._toastTimer = setTimeout(() => box.classList.add('hidden'), 3000);
     }
 
+    function setFeedWaterSub(sub) {
+      const isFeed = sub !== 'water';
+      const feedEl = document.getElementById('fwSubFeed');
+      const waterEl = document.getElementById('fwSubWater');
+      const btnF = document.getElementById('fwSubBtnFeed');
+      const btnW = document.getElementById('fwSubBtnWater');
+      if (feedEl) feedEl.classList.toggle('hidden', !isFeed);
+      if (waterEl) waterEl.classList.toggle('hidden', isFeed);
+      if (btnF) btnF.className = isFeed
+        ? 'py-2.5 px-3 rounded-xl bg-emerald-700 text-white text-xs sm:text-sm font-extrabold shadow-sm transition'
+        : 'py-2.5 px-3 rounded-xl text-gray-600 hover:bg-gray-100 text-xs sm:text-sm font-bold transition';
+      if (btnW) btnW.className = !isFeed
+        ? 'py-2.5 px-3 rounded-xl bg-cyan-700 text-white text-xs sm:text-sm font-extrabold shadow-sm transition'
+        : 'py-2.5 px-3 rounded-xl text-gray-600 hover:bg-gray-100 text-xs sm:text-sm font-bold transition';
+    }
+
+    document.querySelectorAll('[data-fw-sub]').forEach(btn => {
+      btn.addEventListener('click', () => setFeedWaterSub(btn.getAttribute('data-fw-sub')));
+    });
+
     function switchTab(tabName, skipHistory) {
+      if (tabName === 'feed' || tabName === 'water') {
+        setFeedWaterSub(tabName);
+        tabName = 'feedwater';
+      }
       if (!skipHistory && tabName !== currentTabName) {
         try { history.pushState({ tab: tabName }, '', '#/' + tabName); } catch (e) {}
       }
@@ -1708,9 +1922,9 @@
 
       document.querySelectorAll('.mob-nav-btn').forEach(btn => {
         if (btn.dataset.mobTab === tabName) {
-          btn.className = 'mob-nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-emerald-700 bg-emerald-50 font-extrabold text-[11px] gap-0.5 transition';
+          btn.className = 'mob-nav-btn flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl text-emerald-700 bg-emerald-50 font-extrabold text-[10px] gap-0.5 transition';
         } else {
-          btn.className = 'mob-nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-gray-500 font-bold text-[11px] gap-0.5 transition';
+          btn.className = 'mob-nav-btn flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl text-gray-500 font-bold text-[10px] gap-0.5 transition';
         }
       });
 
@@ -1748,28 +1962,7 @@
       return closedAny;
     }
 
-    function updateDatalists() {
-      const allList = document.getElementById('allIdList');
-      const femaleList = document.getElementById('femaleIdList');
-      const maleList = document.getElementById('maleIdList');
-
-      allList.innerHTML = '';
-      femaleList.innerHTML = '';
-      maleList.innerHTML = '';
-
-      state.herd.forEach(a => {
-        const opt = document.createElement('option');
-        opt.value = a.id;
-        opt.label = `${a.type} - ${a.breed}`;
-        allList.appendChild(opt);
-
-        if (a.gender === 'أنثى') {
-          femaleList.appendChild(opt.cloneNode(true));
-        } else {
-          maleList.appendChild(opt.cloneNode(true));
-        }
-      });
-    }
+    function updateDatalists() {}
 
     function renderHome() {
       const total = state.herd.length;
@@ -1848,17 +2041,27 @@
           blue: 'background: linear-gradient(135deg, #BFDBFE 0%, #93C5FD 100%); border-bottom: 1.5px dashed #2563EB; color: #1E3A8A;',
           orange: 'background: linear-gradient(135deg, #FED7AA 0%, #FDBA74 100%); border-bottom: 1.5px dashed #EA580C; color: #7C2D12;',
           rose: 'background: linear-gradient(135deg, #FECDD3 0%, #FDA4AF 100%); border-bottom: 1.5px dashed #E11D48; color: #881337;',
-          gray: 'background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%); border-bottom: 1.5px dashed #6B7280; color: #1F2937;'
+          gray: 'background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%); border-bottom: 1.5px dashed #6B7280; color: #1F2937;',
+          purple: 'background: linear-gradient(135deg, #E9D5FF 0%, #D8B4FE 100%); border-bottom: 1.5px dashed #9333EA; color: #3B0764;',
+          cyan: 'background: linear-gradient(135deg, #A5F3FC 0%, #67E8F9 100%); border-bottom: 1.5px dashed #0891B2; color: #164E63;',
+          lime: 'background: linear-gradient(135deg, #D9F99D 0%, #BEF264 100%); border-bottom: 1.5px dashed #65A30D; color: #1A2E05;',
+          indigo: 'background: linear-gradient(135deg, #C7D2FE 0%, #A5B4FC 100%); border-bottom: 1.5px dashed #4F46E5; color: #1E1B4B;',
+          stone: 'background: linear-gradient(135deg, #E7E5E4 0%, #D6D3D1 100%); border-bottom: 1.5px dashed #78716C; color: #1C1917;',
+          slate: 'background: linear-gradient(135deg, #CBD5E1 0%, #94A3B8 100%); border-bottom: 1.5px dashed #334155; color: #0F172A;'
         };
         const tagStyle = tagThemes[a.tagColor || 'amber'] || tagThemes.amber;
 
+        const isSelected = selectedHerdIds.has(a.id);
         return `
-          <div class="ear-tag-card flex flex-col justify-between">
+          <div class="ear-tag-card flex flex-col justify-between ${herdSelectMode ? 'cursor-pointer select-none' : ''} ${isSelected ? 'ring-2 ring-emerald-600 border-emerald-600' : ''}" ${herdSelectMode ? `data-toggle-herd-card="${escapeHtml(a.id)}"` : ''}>
             <div>
               <div class="ear-tag-header" style="${tagStyle}">
                 <span class="ear-tag-hole"></span>
                 <div class="w-full flex items-center justify-between gap-2">
-                  <span class="text-lg font-extrabold tracking-wide">رقم ${escapeHtml(a.id)}</span>
+                  <span class="flex items-center gap-2">
+                    ${herdSelectMode ? `<input type="checkbox" data-herd-select-cb="${escapeHtml(a.id)}" class="w-4 h-4 accent-emerald-700 rounded cursor-pointer" ${isSelected ? 'checked' : ''} />` : ''}
+                    <span class="text-lg font-extrabold tracking-wide">رقم ${escapeHtml(a.id)}</span>
+                  </span>
                   <span class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full border ${statusColor}">${escapeHtml(a.status)}</span>
                 </div>
               </div>
@@ -1870,7 +2073,7 @@
                 </div>
 
                 <div class="text-xs text-gray-600 space-y-1.5 bg-gray-50/80 p-2.5 rounded-xl border border-gray-100">
-                  ${a.birthDate ? `<p><span class="font-bold text-gray-800">التاريخ:</span> <span class="date-badge">${escapeHtml(formatArabicDate(a.birthDate))}</span></p>` : ''}
+                  ${a.birthDate ? `<p><span class="font-bold text-gray-800">العمر / التاريخ:</span> <span class="font-extrabold text-emerald-800">${escapeHtml(formatAgeFromISO(a.birthDate))}</span> <span class="date-badge">${escapeHtml(formatArabicDate(a.birthDate))}</span></p>` : ''}
                   <p>
                     <span class="font-bold text-gray-800">الأم:</span> ${a.motherId ? escapeHtml(a.motherId) : 'غير مسجلة'}
                     <span class="mx-1 text-gray-300">|</span>
@@ -2294,24 +2497,199 @@
       });
     });
 
-    function setTagColorUI(inputId, btnSelector, attrName, color) {
-      document.getElementById(inputId).value = color || 'amber';
-      document.querySelectorAll(btnSelector).forEach(b => {
-        if (b.getAttribute(attrName) === (color || 'amber')) {
-          b.classList.add('border-gray-900', 'ring-2');
-          b.classList.remove('border-white');
-        } else {
-          b.classList.remove('border-gray-900', 'ring-2');
-          b.classList.add('border-white');
-        }
-      });
+    const TAG_COLOR_LIST = [
+      { key: 'amber', name: 'أصفر', cls: 'bg-amber-300' },
+      { key: 'emerald', name: 'أخضر', cls: 'bg-emerald-300' },
+      { key: 'blue', name: 'أزرق', cls: 'bg-blue-300' },
+      { key: 'orange', name: 'برتقالي', cls: 'bg-orange-300' },
+      { key: 'rose', name: 'أحمر / وردي', cls: 'bg-rose-300' },
+      { key: 'gray', name: 'أبيض / رمادي', cls: 'bg-gray-200' },
+      { key: 'purple', name: 'بنفسجي', cls: 'bg-purple-300' },
+      { key: 'cyan', name: 'سماوي', cls: 'bg-cyan-300' },
+      { key: 'lime', name: 'ليموني', cls: 'bg-lime-300' },
+      { key: 'indigo', name: 'نيلي', cls: 'bg-indigo-300' },
+      { key: 'stone', name: 'بيج / بني', cls: 'bg-stone-300' },
+      { key: 'slate', name: 'كحلي / فحمي', cls: 'bg-slate-400' }
+    ];
+
+    function setTagColorUI(inputId, _btnSelector, _attrName, color) {
+      const c = TAG_COLOR_LIST.find(x => x.key === color) || TAG_COLOR_LIST[0];
+      const inp = document.getElementById(inputId);
+      if (inp) inp.value = c.key;
+      const dot = document.getElementById(inputId + 'Dot');
+      const nameEl = document.getElementById(inputId + 'Name');
+      if (dot) dot.className = `w-5 h-5 rounded-full ${c.cls} border border-gray-300 shrink-0`;
+      if (nameEl) nameEl.textContent = c.name;
     }
 
-    document.querySelectorAll('.tag-color-btn').forEach(btn => {
-      btn.addEventListener('click', () => setTagColorUI('animalTagColor', '.tag-color-btn', 'data-tag-color', btn.getAttribute('data-tag-color')));
+    let activeColorTargetId = null;
+    function openTagColorPicker(targetInputId) {
+      activeColorTargetId = targetInputId;
+      const cur = document.getElementById(targetInputId)?.value || 'amber';
+      const grid = document.getElementById('tagColorOptionsGrid');
+      grid.innerHTML = TAG_COLOR_LIST.map(c => {
+        const active = c.key === cur;
+        return `
+          <button type="button" data-pick-color="${c.key}" class="p-2.5 rounded-xl border text-xs font-bold flex items-center gap-2 transition ${active ? 'bg-emerald-50 border-emerald-600 text-emerald-950 font-extrabold ring-1 ring-emerald-500' : 'bg-gray-50 hover:bg-emerald-50/60 border-gray-200 text-gray-800'}">
+            <span class="w-5 h-5 rounded-full ${c.cls} border border-gray-300 shrink-0"></span>
+            <span class="truncate">${c.name}</span>
+          </button>
+        `;
+      }).join('');
+      grid.querySelectorAll('[data-pick-color]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (activeColorTargetId) setTagColorUI(activeColorTargetId, '', '', btn.getAttribute('data-pick-color'));
+          const m = document.getElementById('modalTagColorPicker');
+          m.classList.add('hidden'); m.classList.remove('flex');
+        });
+      });
+      const m = document.getElementById('modalTagColorPicker');
+      m.classList.remove('hidden'); m.classList.add('flex');
+    }
+
+    document.querySelectorAll('[data-color-target]').forEach(btn => {
+      btn.addEventListener('click', () => openTagColorPicker(btn.getAttribute('data-color-target')));
     });
-    document.querySelectorAll('.bulk-color-btn').forEach(btn => {
-      btn.addEventListener('click', () => setTagColorUI('bulkTagColor', '.bulk-color-btn', 'data-bulk-color', btn.getAttribute('data-bulk-color')));
+    document.getElementById('btnCloseTagColorPicker').addEventListener('click', () => {
+      const m = document.getElementById('modalTagColorPicker');
+      m.classList.add('hidden'); m.classList.remove('flex');
+    });
+    document.getElementById('modalTagColorPicker').addEventListener('click', (e) => {
+      if (e.target.id === 'modalTagColorPicker') {
+        e.target.classList.add('hidden'); e.target.classList.remove('flex');
+      }
+    });
+
+    function computeBirthDateFromAge(val, unit) {
+      const num = parseInt(val, 10);
+      if (isNaN(num) || num < 0) return '';
+      const d = new Date();
+      if (unit === 'years') d.setFullYear(d.getFullYear() - num);
+      else if (unit === 'months') d.setMonth(d.getMonth() - num);
+      else d.setDate(d.getDate() - num);
+      return d.toISOString().split('T')[0];
+    }
+
+    function formatAgeFromISO(iso) {
+      if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return '';
+      const birth = new Date(iso);
+      const now = new Date();
+      const diffDays = Math.max(0, Math.floor((now - birth) / 86400000));
+      if (diffDays < 30) return diffDays === 0 ? 'حديث الولادة' : `${diffDays} يوم`;
+      const months = (now.getFullYear() - birth.getFullYear()) * 12 + (now.getMonth() - birth.getMonth());
+      if (months < 12) return `${months} ${months <= 10 ? 'أشهر' : 'شهراً'}`;
+      const yrs = Math.floor(months / 12);
+      const remM = months % 12;
+      return remM > 0 ? `${yrs} سنة و ${remM} شهر` : `${yrs} ${yrs === 1 ? 'سنة' : 'سنوات'}`;
+    }
+
+    function syncAgeInputsFromISO(iso, valId, unitId) {
+      const valEl = document.getElementById(valId);
+      const unitEl = document.getElementById(unitId);
+      if (!valEl || !unitEl) return;
+      if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) {
+        valEl.value = '';
+        return;
+      }
+      const birth = new Date(iso);
+      const now = new Date();
+      const diffDays = Math.max(0, Math.floor((now - birth) / 86400000));
+      if (diffDays < 30) {
+        valEl.value = diffDays;
+        unitEl.value = 'days';
+      } else {
+        const months = (now.getFullYear() - birth.getFullYear()) * 12 + (now.getMonth() - birth.getMonth());
+        if (months >= 12 && months % 12 === 0) {
+          valEl.value = months / 12;
+          unitEl.value = 'years';
+        } else {
+          valEl.value = months;
+          unitEl.value = 'months';
+        }
+      }
+      syncMaghnamSelectTrigger(unitEl);
+    }
+
+    function bindAgeAutoCalc(valId, unitId, dateId) {
+      const updateDate = () => {
+        const v = document.getElementById(valId).value;
+        if (v === '') return;
+        const iso = computeBirthDateFromAge(v, document.getElementById(unitId).value);
+        if (iso) setDateValue(dateId, iso);
+      };
+      document.getElementById(valId).addEventListener('input', updateDate);
+      document.getElementById(unitId).addEventListener('change', updateDate);
+      document.getElementById(dateId).addEventListener('change', () => {
+        syncAgeInputsFromISO(document.getElementById(dateId).value, valId, unitId);
+      });
+    }
+    bindAgeAutoCalc('animalAgeVal', 'animalAgeUnit', 'animalBirthDate');
+    bindAgeAutoCalc('bulkAgeVal', 'bulkAgeUnit', 'bulkBirthDate');
+
+    let activeAnimalPickInputId = null;
+    let activeAnimalPickGender = '';
+
+    function renderAnimalPickerList() {
+      const q = document.getElementById('animalPickerSearch').value.trim().toLowerCase();
+      const list = document.getElementById('animalPickerList');
+      const items = state.herd.filter(a => {
+        if (activeAnimalPickGender && a.gender !== activeAnimalPickGender) return false;
+        if (!q) return true;
+        return a.id.toLowerCase().includes(q) || (a.breed || '').toLowerCase().includes(q) || (a.type || '').toLowerCase().includes(q);
+      });
+
+      const dotMap = {
+        amber: 'bg-amber-400', emerald: 'bg-emerald-500', blue: 'bg-blue-500',
+        orange: 'bg-orange-400', rose: 'bg-rose-500', gray: 'bg-gray-400',
+        purple: 'bg-purple-500', cyan: 'bg-cyan-500', lime: 'bg-lime-500',
+        indigo: 'bg-indigo-500', stone: 'bg-stone-500', slate: 'bg-slate-600'
+      };
+
+      if (items.length === 0) {
+        list.innerHTML = `<p class="text-center text-xs text-gray-400 py-5">لا توجد رؤوس مطابقة في الحلال.</p>`;
+      } else {
+        list.innerHTML = items.map(a => `
+          <button type="button" data-picked-id="${escapeHtml(a.id)}" class="w-full text-right px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-400 flex items-center justify-between gap-2 transition">
+            <span class="flex items-center gap-2 min-w-0">
+              <span class="w-3 h-3 rounded-full ${dotMap[a.tagColor || 'amber'] || 'bg-amber-400'} shrink-0"></span>
+              <span class="font-extrabold text-sm text-gray-900">رقم ${escapeHtml(a.id)}</span>
+              <span class="text-xs text-gray-500 truncate">${escapeHtml(a.type)} - ${escapeHtml(a.breed)}</span>
+            </span>
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded-lg bg-white border border-gray-200 text-emerald-800 shrink-0">${escapeHtml(a.gender)}</span>
+          </button>
+        `).join('');
+        list.querySelectorAll('[data-picked-id]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            if (activeAnimalPickInputId) {
+              document.getElementById(activeAnimalPickInputId).value = btn.getAttribute('data-picked-id');
+            }
+            const m = document.getElementById('modalAnimalPicker');
+            m.classList.add('hidden'); m.classList.remove('flex');
+          });
+        });
+      }
+    }
+
+    document.querySelectorAll('[data-pick-animal]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeAnimalPickInputId = btn.getAttribute('data-pick-animal');
+        activeAnimalPickGender = btn.getAttribute('data-pick-gender') || '';
+        document.getElementById('animalPickerTitle').textContent = btn.getAttribute('data-pick-title') || 'اختر رقم الرأس';
+        document.getElementById('animalPickerSearch').value = '';
+        renderAnimalPickerList();
+        const m = document.getElementById('modalAnimalPicker');
+        m.classList.remove('hidden'); m.classList.add('flex');
+      });
+    });
+    document.getElementById('animalPickerSearch').addEventListener('input', renderAnimalPickerList);
+    document.getElementById('btnCloseAnimalPicker').addEventListener('click', () => {
+      const m = document.getElementById('modalAnimalPicker');
+      m.classList.add('hidden'); m.classList.remove('flex');
+    });
+    document.getElementById('modalAnimalPicker').addEventListener('click', (e) => {
+      if (e.target.id === 'modalAnimalPicker') {
+        e.target.classList.add('hidden'); e.target.classList.remove('flex');
+      }
     });
 
     function resetAnimalForm() {
@@ -2319,7 +2697,10 @@
       document.getElementById('animalEditOriginalId').value = '';
       document.getElementById('modalAnimalTitle').textContent = 'إضافة رأس جديد';
       setDateValue('animalBirthDate', todayISO());
-      setTagColorUI('animalTagColor', '.tag-color-btn', 'data-tag-color', 'amber');
+      document.getElementById('animalAgeVal').value = '';
+      document.getElementById('animalAgeUnit').value = 'months';
+      syncMaghnamSelectTrigger(document.getElementById('animalAgeUnit'));
+      setTagColorUI('animalTagColor', '', '', 'amber');
       document.getElementById('customBreedAddBox').classList.add('hidden');
       renderBreedChips('animalBreedGrid', 'animalBreed', 'حري');
       syncMaghnamSelectTrigger(document.getElementById('animalType'));
@@ -2637,7 +3018,9 @@
       const selectedSet = new Set(preselectedIds || []);
       const dotColors = {
         amber: 'bg-amber-400', emerald: 'bg-emerald-500', blue: 'bg-blue-500',
-        orange: 'bg-orange-400', rose: 'bg-rose-500', gray: 'bg-gray-400'
+        orange: 'bg-orange-400', rose: 'bg-rose-500', gray: 'bg-gray-400',
+        purple: 'bg-purple-500', cyan: 'bg-cyan-500', lime: 'bg-lime-500',
+        indigo: 'bg-indigo-500', stone: 'bg-stone-500', slate: 'bg-slate-600'
       };
       box.innerHTML = animals.map(a => {
         const checked = selectedSet.has(a.id) ? 'checked' : '';
@@ -2811,8 +3194,11 @@
       document.getElementById('formBulkAnimal').reset();
       renderBreedChips('bulkBreedGrid', 'bulkBreed', 'حري');
       setBulkTab('auto');
-      setTagColorUI('bulkTagColor', '.bulk-color-btn', 'data-bulk-color', 'amber');
+      setTagColorUI('bulkTagColor', '', '', 'amber');
       setDateValue('bulkBirthDate', todayISO());
+      document.getElementById('bulkAgeVal').value = '';
+      document.getElementById('bulkAgeUnit').value = 'months';
+      syncMaghnamSelectTrigger(document.getElementById('bulkAgeUnit'));
       updateBulkAutoPreview();
       updateBulkPastePreview();
       openModal('modalBulkAnimal');
@@ -3010,6 +3396,7 @@
           renderBreedChips('animalBreedGrid', 'animalBreed', a.breed || 'حري');
           document.getElementById('animalGender').value = a.gender;
           setDateValue('animalBirthDate', a.birthDate || '');
+          syncAgeInputsFromISO(a.birthDate || '', 'animalAgeVal', 'animalAgeUnit');
           document.getElementById('animalStatus').value = a.status;
           document.getElementById('animalMotherId').value = a.motherId || '';
           document.getElementById('animalFatherId').value = a.fatherId || '';
@@ -3198,6 +3585,140 @@
       }
     });
 
+    let herdSelectMode = false;
+    const selectedHerdIds = new Set();
+
+    function updateHerdBulkBarUI() {
+      const bar = document.getElementById('herdBulkActionBar');
+      const toggleBtn = document.getElementById('btnToggleHerdSelect');
+      const badge = document.getElementById('herdSelectedCountBadge');
+      if (bar) bar.classList.toggle('hidden', !herdSelectMode);
+      if (badge) badge.textContent = `تم تحديد: ${selectedHerdIds.size}`;
+      if (toggleBtn) {
+        toggleBtn.textContent = herdSelectMode ? 'إنهاء التحديد' : 'تحديد للتعديل';
+        toggleBtn.className = herdSelectMode
+          ? 'px-3.5 py-2.5 rounded-xl border border-emerald-600 bg-emerald-700 text-white text-sm font-extrabold transition'
+          : 'px-3.5 py-2.5 rounded-xl border border-gray-200 bg-white hover:bg-emerald-50 text-gray-800 text-sm font-bold transition';
+      }
+    }
+
+    document.getElementById('btnToggleHerdSelect').addEventListener('click', () => {
+      herdSelectMode = !herdSelectMode;
+      if (!herdSelectMode) selectedHerdIds.clear();
+      updateHerdBulkBarUI();
+      renderHerd();
+    });
+
+    document.getElementById('btnHerdSelectAllVisible').addEventListener('click', () => {
+      const q = document.getElementById('herdSearch').value.trim().toLowerCase();
+      const typeF = document.getElementById('herdFilterType').value;
+      const genderF = document.getElementById('herdFilterGender').value;
+      state.herd.filter(a => {
+        const matchQ = !q || a.id.toLowerCase().includes(q) || a.breed.toLowerCase().includes(q) || (a.notes || '').toLowerCase().includes(q);
+        const matchType = !typeF || a.type === typeF;
+        const matchGender = !genderF || a.gender === genderF;
+        return matchQ && matchType && matchGender;
+      }).forEach(a => selectedHerdIds.add(a.id));
+      updateHerdBulkBarUI();
+      renderHerd();
+    });
+
+    document.getElementById('btnHerdClearSelection').addEventListener('click', () => {
+      selectedHerdIds.clear();
+      updateHerdBulkBarUI();
+      renderHerd();
+    });
+
+    document.getElementById('herdGrid').addEventListener('click', (e) => {
+      if (!herdSelectMode) return;
+      if (e.target.closest('[data-edit-animal]') || e.target.closest('[data-delete-animal]')) return;
+      const card = e.target.closest('[data-toggle-herd-card]');
+      if (!card) return;
+      const id = card.getAttribute('data-toggle-herd-card');
+      if (selectedHerdIds.has(id)) selectedHerdIds.delete(id);
+      else selectedHerdIds.add(id);
+      updateHerdBulkBarUI();
+      renderHerd();
+    });
+
+    bindAgeAutoCalc('bulkEditAgeVal', 'bulkEditAgeUnit', 'bulkEditBirthDate');
+
+    document.getElementById('btnOpenBulkEditHerd').addEventListener('click', () => {
+      if (selectedHerdIds.size === 0) {
+        showToast('يرجى تحديد رأس واحد على الأقل للتعديل.');
+        return;
+      }
+      document.getElementById('formBulkEditHerd').reset();
+      document.getElementById('bulkEditSubtitle').textContent = `سيتم تطبيق التعديلات على ${selectedHerdIds.size} رأس`;
+      const breedSel = document.getElementById('bulkEditBreed');
+      const allBreeds = [...new Set([...DEFAULT_BREEDS, ...(state.customBreeds || [])])];
+      breedSel.innerHTML = '<option value="">بدون تغيير</option>' + allBreeds.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join('');
+      setDateValue('bulkEditBirthDate', '');
+      document.getElementById('bulkEditChangeColor').checked = false;
+      setTagColorUI('bulkEditTagColor', '', '', 'amber');
+      openModal('modalBulkEditHerd');
+    });
+
+    document.getElementById('btnPickBulkEditColor').addEventListener('click', () => {
+      document.getElementById('bulkEditChangeColor').checked = true;
+    });
+
+    document.getElementById('formBulkEditHerd').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newType = document.getElementById('bulkEditType').value;
+      const newBreed = document.getElementById('bulkEditBreed').value;
+      const newGender = document.getElementById('bulkEditGender').value;
+      const newStatus = document.getElementById('bulkEditStatus').value;
+      const newBirth = document.getElementById('bulkEditBirthDate').value;
+      const changeColor = document.getElementById('bulkEditChangeColor').checked;
+      const newColor = document.getElementById('bulkEditTagColor').value;
+
+      let updatedCount = 0;
+      state.herd.forEach(a => {
+        if (!selectedHerdIds.has(a.id)) return;
+        if (newType) a.type = newType;
+        if (newBreed) a.breed = newBreed;
+        if (newGender) a.gender = newGender;
+        if (newStatus) a.status = newStatus;
+        if (newBirth) a.birthDate = newBirth;
+        if (changeColor && newColor) a.tagColor = newColor;
+        updatedCount++;
+      });
+
+      if (updatedCount > 0) {
+        saveState();
+        herdSelectMode = false;
+        selectedHerdIds.clear();
+        updateHerdBulkBarUI();
+        renderAll();
+        closeAllModals();
+        showToast(`تم تعديل ${updatedCount} رأساً بنجاح.`);
+      } else {
+        closeAllModals();
+      }
+    });
+
+    document.getElementById('btnOpenBulkDeleteHerd').addEventListener('click', () => {
+      if (selectedHerdIds.size === 0) {
+        showToast('يرجى تحديد رأس واحد على الأقل للحذف.');
+        return;
+      }
+      document.getElementById('bulkDeleteConfirmText').textContent = `سيتم حذف ${selectedHerdIds.size} رأساً محدداً من الحلال نهائياً.`;
+      openModal('modalConfirmBulkDelete');
+    });
+
+    document.getElementById('btnConfirmBulkDelete').addEventListener('click', () => {
+      const count = selectedHerdIds.size;
+      state.herd = state.herd.filter(a => !selectedHerdIds.has(a.id));
+      herdSelectMode = false;
+      selectedHerdIds.clear();
+      saveState();
+      updateHerdBulkBarUI();
+      renderAll();
+      closeAllModals();
+      showToast(`تم حذف ${count} رأساً.`);
+    });
+
     document.getElementById('herdSearch').addEventListener('input', renderHerd);
     document.getElementById('herdFilterType').addEventListener('change', renderHerd);
     document.getElementById('herdFilterGender').addEventListener('change', renderHerd);
@@ -3337,11 +3858,13 @@
     });
 
     function navigateBackInsideApp() {
-      const customSel = document.getElementById('modalCustomSelect');
-      if (customSel && !customSel.classList.contains('hidden')) {
-        customSel.classList.add('hidden');
-        customSel.classList.remove('flex');
-        return true;
+      for (const mid of ['modalCustomSelect', 'modalAnimalPicker', 'modalTagColorPicker']) {
+        const mEl = document.getElementById(mid);
+        if (mEl && !mEl.classList.contains('hidden')) {
+          mEl.classList.add('hidden');
+          mEl.classList.remove('flex');
+          return true;
+        }
       }
       const picker = document.getElementById('modalDatePicker');
       if (picker && !picker.classList.contains('hidden')) {
