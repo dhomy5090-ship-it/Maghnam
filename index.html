@@ -12,7 +12,7 @@
   <link id="pwaIconLink" rel="icon" type="image/png" href="" />
   <link id="pwaAppleTouchIcon" rel="apple-touch-icon" href="" />
   <link id="pwaManifestLink" rel="manifest" href="data:application/manifest+json,{}" />
-  <title>مغنم V2.3 | إدارة الحلال والأغنام</title>
+  <title>مغنم V2.4 | إدارة الحلال والأغنام</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-app-compat.js"></script>
@@ -697,7 +697,10 @@
               </select>
             </div>
             <div>
-              <label class="block text-xs font-bold text-gray-700 mb-1">العمر (يحسب التاريخ تلقائياً)</label>
+              <div class="flex items-center justify-between mb-1">
+                <label class="block text-xs font-bold text-gray-700">العمر (يحسب التاريخ)</label>
+                <span id="animalStageBadge" class="text-[11px] font-extrabold px-2 py-0.5 rounded-lg bg-amber-100 text-amber-900 border border-amber-200">بهم</span>
+              </div>
               <div class="grid grid-cols-2 gap-1.5">
                 <input type="number" id="animalAgeVal" min="0" max="360" placeholder="مثال: 7" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm bg-white" />
                 <select id="animalAgeUnit" class="w-full px-2.5 py-2.5 rounded-xl border border-gray-200 text-sm bg-white">
@@ -816,7 +819,10 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-bold text-gray-700 mb-1">العمر للمجموعة (يحسب التاريخ)</label>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-bold text-gray-700">العمر للمجموعة</label>
+              <span id="bulkStageBadge" class="text-[11px] font-extrabold px-2 py-0.5 rounded-lg bg-amber-100 text-amber-900 border border-amber-200">بهم</span>
+            </div>
             <div class="grid grid-cols-2 gap-1.5">
               <input type="number" id="bulkAgeVal" min="0" max="360" placeholder="مثال: 6" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm bg-white" />
               <select id="bulkAgeUnit" class="w-full px-2.5 py-2.5 rounded-xl border border-gray-200 text-sm bg-white">
@@ -1304,7 +1310,7 @@
           <div>
             <div class="flex items-center gap-2">
               <h3 class="text-base font-extrabold text-gray-900">إعدادات تطبيق مغنم</h3>
-              <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">V2.3</span>
+              <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">V2.4</span>
             </div>
             <p class="text-xs text-gray-500">المزامنة السحابية بين الجوالات والذكاء الاصطناعي</p>
           </div>
@@ -2069,7 +2075,10 @@
               <div class="p-4 space-y-2.5">
                 <div class="flex items-center justify-between gap-2">
                   <h3 class="text-base font-extrabold text-gray-900">${escapeHtml(a.breed)}</h3>
-                  <span class="text-xs font-bold px-2.5 py-0.5 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200">${escapeHtml(a.gender)}</span>
+                  <div class="flex items-center gap-1.5 shrink-0">
+                    ${a.birthDate ? `<span class="text-[11px] font-extrabold px-2 py-0.5 rounded-lg bg-amber-50 text-amber-900 border border-amber-200">${escapeHtml(getLivestockAgeStage(a.birthDate, a.type, a.gender))}</span>` : ''}
+                    <span class="text-xs font-bold px-2.5 py-0.5 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200">${escapeHtml(a.gender)}</span>
+                  </div>
                 </div>
 
                 <div class="text-xs text-gray-600 space-y-1.5 bg-gray-50/80 p-2.5 rounded-xl border border-gray-100">
@@ -2570,6 +2579,36 @@
       return d.toISOString().split('T')[0];
     }
 
+    function getLivestockAgeStage(iso, type, gender) {
+      if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return 'غير محدد';
+      const birth = new Date(iso);
+      const now = new Date();
+      const diffDays = Math.max(0, Math.floor((now - birth) / 86400000));
+      const months = diffDays / 30.4375;
+      const isFemale = gender === 'أنثى';
+      const isGoat = type === 'ماعز';
+
+      if (months < 6) {
+        if (isGoat) return isFemale ? 'بهم (جفرة)' : 'بهم (تيس صغير)';
+        return isFemale ? 'بهم (رخل)' : 'بهم (طلي)';
+      }
+      if (months < 12) return isFemale ? 'جذعة' : 'جذع';
+      if (months < 24) return isFemale ? 'ثنية' : 'ثني';
+      if (months < 36) return isFemale ? 'رباعية' : 'رباع';
+      if (months < 48) return isFemale ? 'سديسة' : 'سديس';
+      if (months < 72) return isFemale ? 'تامة (جامعة)' : 'تام (جامع)';
+      return isFemale ? 'هرِمة / عودة' : 'هرِم / عود';
+    }
+
+    function updateLiveStageBadge(dateId, typeId, genderId, badgeId) {
+      const badge = document.getElementById(badgeId);
+      if (!badge) return;
+      const iso = document.getElementById(dateId)?.value || todayISO();
+      const type = document.getElementById(typeId)?.value || 'ضأن';
+      const gender = document.getElementById(genderId)?.value || 'أنثى';
+      badge.textContent = getLivestockAgeStage(iso, type, gender);
+    }
+
     function formatAgeFromISO(iso) {
       if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return '';
       const birth = new Date(iso);
@@ -2625,6 +2664,21 @@
     }
     bindAgeAutoCalc('animalAgeVal', 'animalAgeUnit', 'animalBirthDate');
     bindAgeAutoCalc('bulkAgeVal', 'bulkAgeUnit', 'bulkBirthDate');
+
+    ['animalAgeVal', 'animalAgeUnit', 'animalBirthDate', 'animalType', 'animalGender'].forEach(elId => {
+      const el = document.getElementById(elId);
+      if (el) {
+        el.addEventListener('input', () => updateLiveStageBadge('animalBirthDate', 'animalType', 'animalGender', 'animalStageBadge'));
+        el.addEventListener('change', () => updateLiveStageBadge('animalBirthDate', 'animalType', 'animalGender', 'animalStageBadge'));
+      }
+    });
+    ['bulkAgeVal', 'bulkAgeUnit', 'bulkBirthDate', 'bulkType', 'bulkGender'].forEach(elId => {
+      const el = document.getElementById(elId);
+      if (el) {
+        el.addEventListener('input', () => updateLiveStageBadge('bulkBirthDate', 'bulkType', 'bulkGender', 'bulkStageBadge'));
+        el.addEventListener('change', () => updateLiveStageBadge('bulkBirthDate', 'bulkType', 'bulkGender', 'bulkStageBadge'));
+      }
+    });
 
     let activeAnimalPickInputId = null;
     let activeAnimalPickGender = '';
@@ -2706,6 +2760,7 @@
       syncMaghnamSelectTrigger(document.getElementById('animalType'));
       syncMaghnamSelectTrigger(document.getElementById('animalGender'));
       syncMaghnamSelectTrigger(document.getElementById('animalStatus'));
+      updateLiveStageBadge('animalBirthDate', 'animalType', 'animalGender', 'animalStageBadge');
     }
 
     document.getElementById('btnOpenAddAnimal').addEventListener('click', () => {
@@ -3199,6 +3254,7 @@
       document.getElementById('bulkAgeVal').value = '';
       document.getElementById('bulkAgeUnit').value = 'months';
       syncMaghnamSelectTrigger(document.getElementById('bulkAgeUnit'));
+      updateLiveStageBadge('bulkBirthDate', 'bulkType', 'bulkGender', 'bulkStageBadge');
       updateBulkAutoPreview();
       updateBulkPastePreview();
       openModal('modalBulkAnimal');
@@ -3397,6 +3453,7 @@
           document.getElementById('animalGender').value = a.gender;
           setDateValue('animalBirthDate', a.birthDate || '');
           syncAgeInputsFromISO(a.birthDate || '', 'animalAgeVal', 'animalAgeUnit');
+          updateLiveStageBadge('animalBirthDate', 'animalType', 'animalGender', 'animalStageBadge');
           document.getElementById('animalStatus').value = a.status;
           document.getElementById('animalMotherId').value = a.motherId || '';
           document.getElementById('animalFatherId').value = a.fatherId || '';
@@ -4502,4 +4559,4 @@ ${buildMaghnamAiContext()}`;
     renderAll();
   </script>
 </body>
-</html>
+  </html>
