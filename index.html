@@ -12,7 +12,7 @@
   <link id="pwaIconLink" rel="icon" type="image/png" href="" />
   <link id="pwaAppleTouchIcon" rel="apple-touch-icon" href="" />
   <link id="pwaManifestLink" rel="manifest" href="data:application/manifest+json,{}" />
-  <title>مغنم V2.4 | إدارة الحلال والأغنام</title>
+  <title>مغنم V2.8 | إدارة الحلال والأغنام</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-app-compat.js"></script>
@@ -173,7 +173,7 @@
 
   <!-- الشريط العلوي المتناسق للكمبيوتر والجوال (هوية خضراء داكنة أنيقة) -->
   <header class="bg-gradient-to-l from-[#0F2E24] via-[#13382C] to-[#184435] text-white border-b border-emerald-900/50 sticky top-0 z-30 shadow-md">
-    <div class="max-w-6xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between gap-2">
+    <div class="max-w-6xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
       <div id="brandHomeBtn" class="flex items-center gap-2.5 cursor-pointer min-w-0">
         <div class="w-10 h-10 rounded-2xl bg-amber-300/20 border border-amber-300/40 text-amber-300 flex items-center justify-center shadow-sm shrink-0">
           <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
@@ -185,15 +185,19 @@
             <path d="M19.3 12.2c.8 0 1.4.5 1.4 1.2"/>
           </svg>
         </div>
-        <div class="min-w-0 flex items-center gap-2">
-          <h1 class="text-lg sm:text-2xl font-extrabold text-white truncate">مغنم</h1>
-          <button type="button" id="cloudSyncBadgeBtn" class="w-7 h-7 rounded-full bg-emerald-500/20 border border-emerald-400/35 flex items-center justify-center transition hover:bg-emerald-500/30 shrink-0" title="جاري المزامنة..." aria-label="حالة المزامنة السحابية">
+        <div class="flex items-center justify-start md:justify-end gap-2 shrink-0">
+          <h1 class="text-lg sm:text-2xl font-extrabold text-white whitespace-nowrap">مغنم</h1>
+          <button type="button" id="cloudSyncBadgeBtn" class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-emerald-500/20 border border-emerald-400/35 flex items-center justify-center transition hover:bg-emerald-500/30 shrink-0" title="جاري المزامنة..." aria-label="حالة المزامنة السحابية">
             <span id="cloudSyncDot" class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
           </button>
         </div>
       </div>
 
       <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <button type="button" id="btnOpenNotifications" class="relative w-9 h-9 rounded-xl bg-white/15 hover:bg-white/25 text-white border border-white/20 flex items-center justify-center transition" title="الإشعارات والتنبيهات">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          <span id="notifBadgeCount" class="hidden absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-extrabold flex items-center justify-center shadow">0</span>
+        </button>
         <button type="button" id="btnHeaderCalendar" class="h-9 sm:h-10 px-3 sm:px-3.5 rounded-xl bg-amber-400/20 hover:bg-amber-400/30 text-amber-200 border border-amber-300/35 text-xs sm:text-sm font-extrabold flex items-center gap-1.5 transition" title="التقويم الشهري">
           <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
           <span>التقويم</span>
@@ -224,7 +228,7 @@
   <!-- المحتوى الرئيسي -->
   <main class="flex-1 max-w-6xl w-full mx-auto px-3 sm:px-4 py-5 space-y-5">
     <!-- أيقونة المستشار الذكي العائمة -->
-    <button type="button" id="btnOpenAiAdvisor" class="fixed bottom-24 md:bottom-6 left-4 z-30 h-12 px-3.5 rounded-2xl bg-gradient-to-l from-emerald-900 to-emerald-700 hover:from-emerald-800 hover:to-emerald-600 text-amber-200 border border-amber-300/40 shadow-xl flex items-center gap-2 transition active:scale-95" title="المستشار الذكي وتحليل البيانات">
+    <button type="button" id="btnOpenAiAdvisor" class="fixed bottom-20 md:bottom-6 left-3 md:left-4 z-30 h-10 md:h-12 px-3 md:px-3.5 rounded-2xl bg-gradient-to-l from-emerald-900 to-emerald-700 hover:from-emerald-800 hover:to-emerald-600 text-amber-200 border border-amber-300/40 shadow-xl flex items-center gap-1.5 md:gap-2 transition active:scale-95" title="المستشار الذكي وتحليل البيانات">
       <svg class="w-5 h-5 text-amber-300 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
       <span class="text-xs font-extrabold text-white">المستشار الذكي</span>
     </button>
@@ -262,7 +266,7 @@
       <div class="card-soft p-4 sm:p-5">
         <h2 class="text-base font-extrabold text-gray-900 mb-3">إضافة سريعة</h2>
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3">
-          <button type="button" data-goto="herd" data-open-modal="modalAnimal" class="p-3.5 rounded-xl border border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100 text-right transition">
+          <button type="button" id="btnQuickAddAnimalChoice" class="p-3.5 rounded-xl border border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100 text-right transition">
             <p class="font-bold text-emerald-900 text-sm">+ إضافة رأس جديد</p>
           </button>
           <button type="button" data-goto="health" data-open-modal="modalHealth" class="p-3.5 rounded-xl border border-blue-200 bg-blue-50/70 hover:bg-blue-100 text-right transition">
@@ -396,18 +400,27 @@
         </div>
       </div>
 
-      <div class="card-soft p-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <input type="text" id="herdSearch" placeholder="ابحث بالرقم التعريفي أو السلالة..." class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-emerald-600" />
-        <select id="herdFilterType" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:border-emerald-600">
-          <option value="">كل الأنواع</option>
-          <option value="ضأن">ضأن</option>
-          <option value="ماعز">ماعز</option>
-        </select>
-        <select id="herdFilterGender" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:border-emerald-600">
-          <option value="">كل الأجناس</option>
-          <option value="أنثى">أنثى (رخل / شاة / عنز)</option>
-          <option value="ذكر">ذكر (بهم / فحل / تيس)</option>
-        </select>
+      <div class="card-soft p-3.5 sm:p-4 space-y-3">
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
+          <input type="text" id="herdSearch" placeholder="ابحث بالرقم التعريفي أو السلالة..." class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-emerald-600" />
+          <select id="herdFilterType" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:border-emerald-600">
+            <option value="">كل الأنواع</option>
+            <option value="ضأن">ضأن</option>
+            <option value="ماعز">ماعز</option>
+          </select>
+          <select id="herdFilterGender" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:border-emerald-600">
+            <option value="">كل الأجناس</option>
+            <option value="أنثى">أنثى (رخل / شاة / عنز)</option>
+            <option value="ذكر">ذكر (بهم / فحل / تيس)</option>
+          </select>
+          <select id="herdFilterColor" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:border-emerald-600">
+            <option value="">كل الألوان</option>
+          </select>
+        </div>
+        <div>
+          <p class="text-[11px] font-bold text-gray-500 mb-1.5">غرف الألوان (اضغط على أي لون لعرض حلاله):</p>
+          <div id="herdColorRoomsBar" class="flex flex-wrap gap-1.5"></div>
+        </div>
       </div>
 
       <div id="herdBulkActionBar" class="hidden card-soft p-3 sm:p-3.5 bg-emerald-50/90 border-emerald-200 flex flex-wrap items-center justify-between gap-2">
@@ -422,7 +435,7 @@
         </div>
       </div>
 
-      <div id="herdGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      <div id="herdGrid" class="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4"></div>
     </section>
 
     <!-- قسم: السجل الصحي والتطعيمات -->
@@ -444,8 +457,8 @@
       <div class="card-soft p-4 flex flex-wrap gap-3">
         <select id="healthFilterKind" class="px-3.5 py-2 rounded-xl border border-gray-200 text-sm bg-white">
           <option value="">الكل (تطعيمات وعلاجات)</option>
-          <option value="تطعيم">تطعيمات دورية</option>
-          <option value="علاج">سجل مرضي وعلاج</option>
+          <option value="تطعيم">تطعيم دوري</option>
+          <option value="علاج">علاج</option>
           <option value="فحص">فحص طبي</option>
         </select>
         <input type="text" id="healthSearch" placeholder="ابحث برقم الرأس أو اسم التطعيم..." class="flex-1 min-w-[200px] px-3.5 py-2 rounded-xl border border-gray-200 text-sm" />
@@ -555,6 +568,14 @@
         <button type="button" id="btnOpenAddWeight" class="btn-primary px-4 py-2.5 rounded-xl text-sm font-bold">+ تسجيل وزن جديد</button>
       </div>
 
+      <div class="card-soft p-3.5 sm:p-4 space-y-2">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs sm:text-sm font-extrabold text-gray-900">تصنيف الأوزان (فئات ١٠ كجم)</h3>
+          <span id="weightBracketActiveLabel" class="text-[11px] font-bold text-emerald-700">الكل</span>
+        </div>
+        <div id="weightBracketsBar" class="flex flex-wrap gap-1.5"></div>
+      </div>
+
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div class="card-soft p-5 lg:col-span-2">
           <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
@@ -653,6 +674,32 @@
     </button>
   </nav>
 
+  <!-- نافذة اختيار نوع إضافة الحلال (فردي أو جماعي) -->
+  <div id="modalQuickAddAnimalChoice" class="modal-backdrop fixed inset-0 bg-black/45 z-50 hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white rounded-t-3xl sm:rounded-2xl max-w-sm w-full p-5 sm:p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+        <h3 class="text-base sm:text-lg font-extrabold text-gray-900">إضافة حلال جديد</h3>
+        <button type="button" class="close-modal text-gray-400 hover:text-gray-700 text-2xl font-bold leading-none">&times;</button>
+      </div>
+      <div class="grid grid-cols-1 gap-2.5">
+        <button type="button" id="btnChoiceSingleAnimal" class="p-4 rounded-2xl border border-emerald-200 bg-emerald-50/80 hover:bg-emerald-100 text-right transition flex items-center justify-between">
+          <div>
+            <p class="font-extrabold text-emerald-950 text-sm">+ إضافة رأس جديد (فردي)</p>
+            <p class="text-xs text-emerald-800 mt-0.5">تسجيل رأس واحد برقم تعريفي وتفاصيل كاملة</p>
+          </div>
+          <span class="text-emerald-700 font-extrabold text-lg">&lsaquo;</span>
+        </button>
+        <button type="button" id="btnChoiceBulkAnimal" class="p-4 rounded-2xl border border-amber-200 bg-amber-50/80 hover:bg-amber-100 text-right transition flex items-center justify-between">
+          <div>
+            <p class="font-extrabold text-amber-950 text-sm">+ إضافة جماعية</p>
+            <p class="text-xs text-amber-800 mt-0.5">إضافة مجموعة رؤوس بترقيم تلقائي أو لصق قائمة</p>
+          </div>
+          <span class="text-amber-700 font-extrabold text-lg">&lsaquo;</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- نافذة إضافة / تعديل رأس حلال -->
   <div id="modalAnimal" class="modal-backdrop fixed inset-0 bg-black/45 z-40 hidden items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white rounded-t-3xl sm:rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-xl max-h-[90vh] overflow-y-auto">
@@ -673,6 +720,10 @@
               <option value="ضأن">ضأن</option>
               <option value="ماعز">ماعز</option>
             </select>
+            <div class="flex flex-wrap gap-1.5 mt-1.5" data-chip-sync="animalType">
+              <button type="button" data-chip-val="ضأن" class="px-2.5 py-1 rounded-lg border text-xs font-bold">ضأن</button>
+              <button type="button" data-chip-val="ماعز" class="px-2.5 py-1 rounded-lg border text-xs font-bold">ماعز</button>
+            </div>
           </div>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -695,20 +746,34 @@
                 <option value="أنثى">أنثى (شاة / رخل / عنز)</option>
                 <option value="ذكر">ذكر (فحل / بهم / تيس)</option>
               </select>
+              <div class="flex flex-wrap gap-1.5 mt-1.5" data-chip-sync="animalGender">
+                <button type="button" data-chip-val="أنثى" class="px-2.5 py-1 rounded-lg border text-xs font-bold">أنثى</button>
+                <button type="button" data-chip-val="ذكر" class="px-2.5 py-1 rounded-lg border text-xs font-bold">ذكر</button>
+              </div>
             </div>
             <div>
               <div class="flex items-center justify-between mb-1">
-                <label class="block text-xs font-bold text-gray-700">العمر (يحسب التاريخ)</label>
+                <label class="block text-xs font-bold text-gray-700">العمر والسن (تلقائي أو يدوي)</label>
                 <span id="animalStageBadge" class="text-[11px] font-extrabold px-2 py-0.5 rounded-lg bg-amber-100 text-amber-900 border border-amber-200">بهم</span>
               </div>
-              <div class="grid grid-cols-2 gap-1.5">
-                <input type="number" id="animalAgeVal" min="0" max="360" placeholder="مثال: 7" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm bg-white" />
-                <select id="animalAgeUnit" class="w-full px-2.5 py-2.5 rounded-xl border border-gray-200 text-sm bg-white">
+              <div class="grid grid-cols-2 gap-1.5 mb-1.5">
+                <input type="number" id="animalAgeVal" min="0" max="360" placeholder="مثال: 7" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm bg-white" />
+                <select id="animalAgeUnit" class="w-full px-2.5 py-2 rounded-xl border border-gray-200 text-sm bg-white">
                   <option value="months">شهور</option>
                   <option value="years">سنوات</option>
                   <option value="days">أيام</option>
                 </select>
               </div>
+              <select id="animalStageSelect" class="w-full px-2.5 py-2 rounded-xl border border-amber-200 text-xs bg-amber-50/40 font-bold">
+                <option value="">السن: تلقائي حسب العمر</option>
+                <option value="بهم">بهم (طلي / رخل / جفرة)</option>
+                <option value="جذع">جذع / جذعة</option>
+                <option value="ثني">ثني / ثنية</option>
+                <option value="رباع">رباع / رباعية</option>
+                <option value="سديس">سديس / سديسة</option>
+                <option value="تام">تام / تامة (جامع)</option>
+                <option value="هرم">هرِم / عود</option>
+              </select>
             </div>
           </div>
         </div>
@@ -724,6 +789,11 @@
               <option value="تسمين">تحت التسمين</option>
               <option value="مباع">مباع</option>
             </select>
+            <div class="flex flex-wrap gap-1.5 mt-1.5" data-chip-sync="animalStatus">
+              <button type="button" data-chip-val="موجود" class="px-2.5 py-1 rounded-lg border text-xs font-bold">موجود</button>
+              <button type="button" data-chip-val="تسمين" class="px-2.5 py-1 rounded-lg border text-xs font-bold">تسمين</button>
+              <button type="button" data-chip-val="مباع" class="px-2.5 py-1 rounded-lg border text-xs font-bold">مباع</button>
+            </div>
           </div>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-emerald-50/60 p-3 rounded-xl border border-emerald-100">
@@ -820,17 +890,27 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <div class="flex items-center justify-between mb-1">
-              <label class="block text-xs font-bold text-gray-700">العمر للمجموعة</label>
+              <label class="block text-xs font-bold text-gray-700">العمر والسن للمجموعة</label>
               <span id="bulkStageBadge" class="text-[11px] font-extrabold px-2 py-0.5 rounded-lg bg-amber-100 text-amber-900 border border-amber-200">بهم</span>
             </div>
-            <div class="grid grid-cols-2 gap-1.5">
-              <input type="number" id="bulkAgeVal" min="0" max="360" placeholder="مثال: 6" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm bg-white" />
-              <select id="bulkAgeUnit" class="w-full px-2.5 py-2.5 rounded-xl border border-gray-200 text-sm bg-white">
+            <div class="grid grid-cols-2 gap-1.5 mb-1.5">
+              <input type="number" id="bulkAgeVal" min="0" max="360" placeholder="مثال: 6" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm bg-white" />
+              <select id="bulkAgeUnit" class="w-full px-2.5 py-2 rounded-xl border border-gray-200 text-sm bg-white">
                 <option value="months">شهور</option>
                 <option value="years">سنوات</option>
                 <option value="days">أيام</option>
               </select>
             </div>
+            <select id="bulkStageSelect" class="w-full px-2.5 py-2 rounded-xl border border-amber-200 text-xs bg-amber-50/40 font-bold">
+              <option value="">السن: تلقائي حسب العمر</option>
+              <option value="بهم">بهم (طلي / رخل / جفرة)</option>
+              <option value="جذع">جذع / جذعة</option>
+              <option value="ثني">ثني / ثنية</option>
+              <option value="رباع">رباع / رباعية</option>
+              <option value="سديس">سديس / سديسة</option>
+              <option value="تام">تام / تامة (جامع)</option>
+              <option value="هرم">هرِم / عود</option>
+            </select>
           </div>
           <div>
             <label class="block text-xs font-bold text-gray-700 mb-1">تاريخ الميلاد / الشراء</label>
@@ -903,11 +983,15 @@
             <button type="button" data-health-scope="all" class="health-scope-btn py-2 px-2 rounded-xl border border-gray-200 bg-white text-gray-600 text-xs font-bold">القطيع كامل</button>
           </div>
           <input type="hidden" id="healthScopeMode" value="single" />
-          <div id="healthSingleBox" class="relative flex items-center">
-            <input type="text" id="healthAnimalId" placeholder="اختر أو اكتب رقم الرأس، مثال: 101" class="w-full pl-10 pr-3 py-2.5 rounded-xl border border-gray-200 text-sm bg-white" />
-            <button type="button" data-pick-animal="healthAnimalId" data-pick-gender="" data-pick-title="اختر رقم الرأس" class="absolute left-1.5 w-8 h-8 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 flex items-center justify-center" title="اختيار من القائمة">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-            </button>
+          <div id="healthSingleBox" class="space-y-1.5">
+            <div class="relative flex items-center">
+              <input type="text" id="healthAnimalId" placeholder="اختر رأساً أو أكثر، أو اكتب الأرقام (مثال: 1، 7)" class="w-full pl-24 pr-3 py-2.5 rounded-xl border border-gray-200 text-sm bg-white" />
+              <button type="button" id="btnPickMultiHealthAnimals" class="absolute left-1.5 px-2.5 h-8 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-extrabold flex items-center gap-1" title="تحديد رأس أو أكثر">
+                <span>اختيار</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </button>
+            </div>
+            <div id="healthPickedTagsBox" class="flex flex-wrap gap-1.5"></div>
           </div>
           <div id="healthGroupBox" class="hidden space-y-2.5 p-3 rounded-xl bg-gray-50 border border-gray-200">
             <div class="grid grid-cols-2 gap-2">
@@ -932,7 +1016,7 @@
             <label class="block text-xs font-bold text-gray-700 mb-1">نوع الإجراء *</label>
             <select id="healthKind" required class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm bg-white">
               <option value="تطعيم">تطعيم دوري</option>
-              <option value="علاج">إصابة وعلاج</option>
+              <option value="علاج">علاج</option>
               <option value="فحص">فحص طبي</option>
             </select>
           </div>
@@ -946,8 +1030,21 @@
           </div>
         </div>
         <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1">اسم التطعيم / التشخيص الطبي *</label>
-          <input type="text" id="healthTitle" required placeholder="مثال: تطعيم دموي ومعوي، أو علاج التهاب" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm" />
+          <div class="flex items-center justify-between mb-1">
+            <label id="healthTitleLabel" class="block text-xs font-bold text-gray-700">اسم التطعيم *</label>
+            <button type="button" id="btnToggleCustomVaccine" class="text-xs font-extrabold text-emerald-700 hover:underline">+ إضافة تطعيم</button>
+          </div>
+          <input type="text" id="healthTitle" required placeholder="اختر التطعيم أو اكتب الاسم..." class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm" />
+          <div id="healthVaccineSection" class="mt-2 space-y-2">
+            <div id="customVaccineAddBox" class="hidden flex items-center gap-2">
+              <input type="text" id="newCustomVaccineInput" placeholder="اكتب اسم التطعيم لحفظه دائماً..." class="flex-1 px-3 py-2 rounded-xl border border-emerald-200 text-xs bg-white" />
+              <button type="button" id="btnSaveCustomVaccine" class="px-3 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shrink-0">حفظ</button>
+            </div>
+            <div class="p-2.5 rounded-xl bg-blue-50/50 border border-blue-100 space-y-1.5">
+              <p class="text-[11px] font-bold text-blue-900">تطعيمات جاهزة ومضافة (اضغط للاختيار):</p>
+              <div id="healthVaccineGrid" class="flex flex-wrap gap-1.5"></div>
+            </div>
+          </div>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
@@ -955,23 +1052,36 @@
             <input type="hidden" id="healthDate" data-date-required="1" /><button type="button" class="date-trigger-btn" data-date-for="healthDate"><span class="date-trigger-label text-gray-500">اختر التاريخ</span><svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></button>
           </div>
           <div>
-            <label class="block text-xs font-bold text-gray-700 mb-1">موعد التطعيم / المراجعة القادم</label>
-            <input type="hidden" id="healthNextDate" /><button type="button" class="date-trigger-btn" data-date-for="healthNextDate"><span class="date-trigger-label text-gray-500">اختر التاريخ</span><svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></button>
+            <label class="block text-xs font-bold text-gray-700 mb-1">الموعد القادم (بالأشهر)</label>
+            <input type="hidden" id="healthNextDate" />
+            <div class="flex flex-wrap gap-1 mb-1.5">
+              <button type="button" data-next-months="0" class="next-month-chip px-2 py-1 rounded-lg border border-gray-200 bg-gray-50 text-[11px] font-bold">بدون</button>
+              <button type="button" data-next-months="1" class="next-month-chip px-2 py-1 rounded-lg border border-gray-200 bg-gray-50 text-[11px] font-bold">شهر</button>
+              <button type="button" data-next-months="3" class="next-month-chip px-2 py-1 rounded-lg border border-gray-200 bg-gray-50 text-[11px] font-bold">3 شهور</button>
+              <button type="button" data-next-months="6" class="next-month-chip px-2 py-1 rounded-lg border border-gray-200 bg-gray-50 text-[11px] font-bold">6 شهور</button>
+              <button type="button" data-next-months="12" class="next-month-chip px-2 py-1 rounded-lg border border-gray-200 bg-gray-50 text-[11px] font-bold">سنة</button>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <input type="number" id="healthNextMonthsInput" min="0" max="60" placeholder="عدد الأشهر" class="w-full px-2.5 py-1.5 rounded-xl border border-gray-200 text-xs bg-white" />
+              <span id="healthNextDatePreview" class="text-[11px] font-bold text-blue-700 whitespace-nowrap shrink-0"></span>
+            </div>
           </div>
         </div>
         <div>
-          <div class="flex items-center justify-between mb-1">
-            <label class="block text-xs font-bold text-gray-700">اسم الدواء / المستحضر البيطري</label>
-            <button type="button" id="btnToggleCustomMed" class="text-xs font-extrabold text-emerald-700 hover:underline">+ إضافة دواء للقائمة</button>
-          </div>
-          <input type="text" id="healthMedicine" placeholder="اختر من الأدوية بالأسفل أو اكتب اسم الدواء" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm mb-2" />
-          <div id="customMedAddBox" class="hidden mb-2 flex items-center gap-2">
-            <input type="text" id="newCustomMedInput" placeholder="اكتب اسم الدواء لحفظه دائماً..." class="flex-1 px-3 py-2 rounded-xl border border-emerald-200 text-xs bg-white" />
-            <button type="button" id="btnSaveCustomMed" class="px-3 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shrink-0">حفظ</button>
-          </div>
-          <div class="p-2.5 rounded-xl bg-gray-50 border border-gray-200 space-y-1.5 mb-2.5">
-            <p class="text-[11px] font-bold text-gray-500">أدوية وفيتامينات أساسية ومضافة (اضغط للاختيار):</p>
-            <div id="healthMedicineGrid" class="flex flex-wrap gap-1.5"></div>
+          <div id="healthMedicineSection">
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-bold text-gray-700">اسم الدواء / المستحضر البيطري</label>
+              <button type="button" id="btnToggleCustomMed" class="text-xs font-extrabold text-emerald-700 hover:underline">+ إضافة دواء للقائمة</button>
+            </div>
+            <input type="text" id="healthMedicine" placeholder="اختر من الأدوية بالأسفل أو اكتب اسم الدواء" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm mb-2" />
+            <div id="customMedAddBox" class="hidden mb-2 flex items-center gap-2">
+              <input type="text" id="newCustomMedInput" placeholder="اكتب اسم الدواء لحفظه دائماً..." class="flex-1 px-3 py-2 rounded-xl border border-emerald-200 text-xs bg-white" />
+              <button type="button" id="btnSaveCustomMed" class="px-3 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shrink-0">حفظ</button>
+            </div>
+            <div class="p-2.5 rounded-xl bg-gray-50 border border-gray-200 space-y-1.5 mb-2.5">
+              <p class="text-[11px] font-bold text-gray-500">أدوية وعلاجات بيطرية (اضغط للاختيار):</p>
+              <div id="healthMedicineGrid" class="flex flex-wrap gap-1.5"></div>
+            </div>
           </div>
           <label class="block text-xs font-bold text-gray-700 mb-1">التكلفة / المبلغ (ريال)</label>
           <input type="number" id="healthCost" min="0" step="0.5" placeholder="اختياري (مثال: 150)" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm mb-2.5" />
@@ -1086,19 +1196,28 @@
           </div>
         </div>
         <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1">الشركة / المورد</label>
+          <label class="block text-xs font-bold text-gray-700 mb-1">الشركة / المورد (شركات الأعلاف والبهم)</label>
           <select id="feedSupplier" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm bg-white">
             <option value="">غير محدد</option>
             <option value="أراسكو (وافي)">أراسكو (وافي)</option>
-            <option value="المطاحن الأولى">المطاحن الأولى</option>
-            <option value="المطاحن العربية">المطاحن العربية</option>
-            <option value="المطاحن الحديثة">المطاحن الحديثة</option>
-            <option value="المطاحن الرابعة">المطاحن الرابعة</option>
+            <option value="شركة المتحدة للأعلاف">شركة المتحدة للأعلاف</option>
             <option value="سالك">سالك</option>
             <option value="سوق الأعلاف المحلي">سوق الأعلاف المحلي</option>
+            <option value="مزارع الأعلاف">مزارع الأعلاف</option>
             <option value="أخرى">أخرى (كتابة اسم الشركة)</option>
           </select>
           <input type="text" id="feedSupplierCustom" placeholder="اكتب اسم الشركة الموردة" class="hidden mt-2 w-full px-3 py-2 rounded-xl border border-gray-200 text-sm" />
+          <div id="feedSupplierProductsBox" class="hidden mt-2 p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200 space-y-1.5">
+            <div class="flex items-center justify-between gap-2">
+              <p class="text-[11px] font-bold text-emerald-900">منتجات الشركة (اضغط لاختيار المنتج):</p>
+              <button type="button" id="btnToggleCustomSupProd" class="text-[11px] font-extrabold text-emerald-700 hover:underline">+ إضافة منتج للشركة</button>
+            </div>
+            <div id="customSupProdAddBox" class="hidden flex items-center gap-1.5">
+              <input type="text" id="newCustomSupProdInput" placeholder="اكتب اسم المنتج لحفظه لهذه الشركة..." class="flex-1 px-2.5 py-1.5 rounded-lg border border-emerald-200 text-xs bg-white" />
+              <button type="button" id="btnSaveCustomSupProd" class="px-3 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shrink-0">حفظ</button>
+            </div>
+            <div id="feedSupplierProductsGrid" class="flex flex-wrap gap-1.5"></div>
+          </div>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
@@ -1121,9 +1240,17 @@
             <input type="hidden" id="feedDate" data-date-required="1" /><button type="button" class="date-trigger-btn" data-date-for="feedDate"><span class="date-trigger-label text-gray-500">اختر التاريخ</span><svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></button>
           </div>
         </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">سعر الوحدة الواحدة (ريال)</label>
+            <input type="number" id="feedUnitPrice" min="0" step="0.5" placeholder="مثال: 65" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">السعر الإجمالي / التكلفة (ريال)</label>
+            <input type="number" id="feedCost" min="0" step="0.5" placeholder="يحسب تلقائياً أو اكتبه" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm" />
+          </div>
+        </div>
         <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1">التكلفة / المبلغ (ريال)</label>
-          <input type="number" id="feedCost" min="0" step="0.5" placeholder="اختياري (مثال: 350)" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm mb-2.5" />
           <label class="block text-xs font-bold text-gray-700 mb-1">ملاحظات</label>
           <input type="text" id="feedNotes" placeholder="مثال: وجبة صباحية أو حظيرة التسمين" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm" />
         </div>
@@ -1310,7 +1437,7 @@
           <div>
             <div class="flex items-center gap-2">
               <h3 class="text-base font-extrabold text-gray-900">إعدادات تطبيق مغنم</h3>
-              <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">V2.4</span>
+              <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">V2.8</span>
             </div>
             <p class="text-xs text-gray-500">المزامنة السحابية بين الجوالات والذكاء الاصطناعي</p>
           </div>
@@ -1520,6 +1647,30 @@
     </div>
   </div>
 
+  <!-- نافذة الإشعارات والتنبيهات -->
+  <div id="modalNotifications" class="modal-backdrop fixed inset-0 bg-black/45 z-50 hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white rounded-t-3xl sm:rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl max-h-[85vh] flex flex-col space-y-3">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-3 shrink-0">
+        <div>
+          <h3 class="text-base font-extrabold text-gray-900">الإشعارات والتنبيهات</h3>
+          <p class="text-xs text-gray-500">مواعيد التطعيمات، الولادات المتوقعة، والتنبيهات</p>
+        </div>
+        <button type="button" class="close-modal text-gray-400 hover:text-gray-700 text-2xl font-bold leading-none">&times;</button>
+      </div>
+      <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-between gap-2 shrink-0">
+        <div class="text-xs">
+          <p class="font-extrabold text-emerald-950">إشعارات الجهاز</p>
+          <p id="notifPermStatus" class="text-emerald-800">اضغط لتفعيل تنبيهات المتصفح/الجوال</p>
+        </div>
+        <button type="button" id="btnEnableBrowserNotifs" class="btn-primary px-3 py-1.5 rounded-xl text-xs font-bold shrink-0">تفعيل</button>
+      </div>
+      <div id="notificationsListBody" class="overflow-y-auto space-y-2 flex-1 text-sm"></div>
+      <div class="flex justify-end pt-1 shrink-0">
+        <button type="button" class="close-modal px-5 py-2 rounded-xl border border-gray-200 text-sm font-bold text-gray-700">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
   <!-- نافذة اختيار رقم الرأس المخصصة بتصميم مغنم -->
   <div id="modalAnimalPicker" class="fixed inset-0 bg-black/45 z-[60] hidden items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white rounded-t-3xl sm:rounded-2xl max-w-sm w-full p-4 sm:p-5 shadow-2xl border border-emerald-100 max-h-[80vh] flex flex-col">
@@ -1529,6 +1680,10 @@
       </div>
       <input type="text" id="animalPickerSearch" placeholder="ابحث بالرقم أو السلالة..." class="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm mb-2.5 shrink-0" />
       <div id="animalPickerList" class="overflow-y-auto space-y-1.5 flex-1"></div>
+      <div id="animalPickerMultiFooter" class="hidden pt-3 mt-2 border-t border-gray-100 flex items-center justify-between gap-2 shrink-0">
+        <span id="animalPickerMultiCount" class="text-xs font-extrabold text-emerald-800">المحدد: 0</span>
+        <button type="button" id="btnConfirmAnimalPickerMulti" class="btn-primary px-5 py-2 rounded-xl text-xs font-extrabold">تأكيد الاختيار</button>
+      </div>
     </div>
   </div>
 
@@ -1622,6 +1777,8 @@
       customFeeds: [],
       customBreeds: [],
       customMedicines: [],
+      customVaccines: [],
+      customSupplierProducts: {},
       aiApiKey: DEFAULT_MAGHNAM_AI_KEY,
       updatedAt: 0
     };
@@ -1644,6 +1801,8 @@
             customFeeds: Array.isArray(parsed.customFeeds) ? parsed.customFeeds : [],
             customBreeds: Array.isArray(parsed.customBreeds) ? parsed.customBreeds : [],
             customMedicines: Array.isArray(parsed.customMedicines) ? parsed.customMedicines : [],
+            customVaccines: Array.isArray(parsed.customVaccines) ? parsed.customVaccines : [],
+            customSupplierProducts: (parsed.customSupplierProducts && typeof parsed.customSupplierProducts === "object" && !Array.isArray(parsed.customSupplierProducts)) ? parsed.customSupplierProducts : {},
             aiApiKey: typeof parsed.aiApiKey === 'string' && parsed.aiApiKey.trim() ? parsed.aiApiKey.trim() : DEFAULT_MAGHNAM_AI_KEY,
             updatedAt: Number(parsed.updatedAt || 0)
           };
@@ -1736,6 +1895,8 @@
         customFeeds: state.customFeeds || [],
         customBreeds: state.customBreeds || [],
         customMedicines: state.customMedicines || [],
+        customVaccines: state.customVaccines || [],
+        customSupplierProducts: state.customSupplierProducts || {},
         aiApiKey: getActiveAiKey(),
         updatedAt: state.updatedAt || Date.now()
       });
@@ -1794,6 +1955,8 @@
         customFeeds: Array.isArray(remote.customFeeds) ? remote.customFeeds : [],
         customBreeds: Array.isArray(remote.customBreeds) ? remote.customBreeds : [],
         customMedicines: Array.isArray(remote.customMedicines) ? remote.customMedicines : [],
+        customVaccines: Array.isArray(remote.customVaccines) ? remote.customVaccines : [],
+        customSupplierProducts: (remote.customSupplierProducts && typeof remote.customSupplierProducts === "object" && !Array.isArray(remote.customSupplierProducts)) ? remote.customSupplierProducts : {},
         aiApiKey: (typeof remote.aiApiKey === 'string' && remote.aiApiKey.trim()) ? remote.aiApiKey.trim() : getActiveAiKey(),
         updatedAt: remoteTs || Date.now()
       };
@@ -1954,6 +2117,7 @@
         if (inp) inp.value = getActiveAiKey();
       }
       initMaghnamSelects();
+      updateNotificationBadge();
     }
 
     function closeAllModals() {
@@ -2017,17 +2181,71 @@
       }
     }
 
+    function normalizeDigits(str) {
+      return String(str || '').replace(/[٠-٩]/g, d => '0123456789'['٠١٢٣٤٥٦٧٨٩'.indexOf(d)]);
+    }
+
+    function renderHerdColorFilterAndRooms() {
+      const sel = document.getElementById('herdFilterColor');
+      if (sel && sel.options.length <= 1) {
+        TAG_COLOR_LIST.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.key;
+          opt.textContent = c.name;
+          sel.appendChild(opt);
+        });
+      }
+      const bar = document.getElementById('herdColorRoomsBar');
+      if (!bar) return;
+      const curColor = sel ? sel.value : '';
+      const counts = {};
+      state.herd.forEach(a => {
+        const k = a.tagColor || 'amber';
+        counts[k] = (counts[k] || 0) + 1;
+      });
+      const allActive = !curColor;
+      let html = `<button type="button" data-room-color="" class="px-2.5 py-1 rounded-xl border text-[11px] font-extrabold transition ${allActive ? 'bg-emerald-700 text-white border-emerald-700' : 'bg-gray-50 hover:bg-emerald-50 text-gray-700 border-gray-200'}">الكل (${state.herd.length})</button>`;
+      TAG_COLOR_LIST.forEach(c => {
+        const cnt = counts[c.key] || 0;
+        if (cnt === 0 && curColor !== c.key) return;
+        const active = curColor === c.key;
+        html += `<button type="button" data-room-color="${c.key}" class="px-2.5 py-1 rounded-xl border text-[11px] font-bold flex items-center gap-1.5 transition ${active ? 'bg-emerald-700 text-white border-emerald-700 shadow-sm' : 'bg-white hover:bg-emerald-50 text-gray-800 border-gray-200'}"><span class="w-3 h-3 rounded-full ${c.dot} shrink-0"></span><span>${c.name} (${cnt})</span></button>`;
+      });
+      bar.innerHTML = html;
+      bar.querySelectorAll('[data-room-color]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (sel) {
+            sel.value = btn.getAttribute('data-room-color');
+            syncMaghnamSelectTrigger(sel);
+          }
+          renderHerd();
+        });
+      });
+    }
+
     function renderHerd() {
-      const q = document.getElementById('herdSearch').value.trim().toLowerCase();
+      renderHerdColorFilterAndRooms();
+      const q = normalizeDigits(document.getElementById('herdSearch').value.trim()).toLowerCase();
       const typeF = document.getElementById('herdFilterType').value;
       const genderF = document.getElementById('herdFilterGender').value;
+      const colorF = document.getElementById('herdFilterColor')?.value || '';
 
-      const filtered = state.herd.filter(a => {
-        const matchQ = !q || a.id.toLowerCase().includes(q) || a.breed.toLowerCase().includes(q) || (a.notes || '').toLowerCase().includes(q);
+      let filtered = state.herd.filter(a => {
+        const idNorm = normalizeDigits(a.id).toLowerCase();
+        const matchQ = !q || idNorm.includes(q) || (a.breed || '').toLowerCase().includes(q) || (a.notes || '').toLowerCase().includes(q);
         const matchType = !typeF || a.type === typeF;
         const matchGender = !genderF || a.gender === genderF;
-        return matchQ && matchType && matchGender;
+        const matchColor = !colorF || (a.tagColor || 'amber') === colorF;
+        return matchQ && matchType && matchGender && matchColor;
       });
+
+      if (q) {
+        filtered.sort((a, b) => {
+          const aExact = normalizeDigits(a.id).toLowerCase() === q ? 0 : 1;
+          const bExact = normalizeDigits(b.id).toLowerCase() === q ? 0 : 1;
+          return aExact - bExact;
+        });
+      }
 
       const grid = document.getElementById('herdGrid');
       if (filtered.length === 0) {
@@ -2043,17 +2261,18 @@
 
         const tagThemes = {
           amber: 'background: linear-gradient(135deg, #FDE68A 0%, #FCD34D 100%); border-bottom: 1.5px dashed #D97706; color: #451A03;',
-          emerald: 'background: linear-gradient(135deg, #A7F3D0 0%, #6EE7B7 100%); border-bottom: 1.5px dashed #059669; color: #064E3B;',
-          blue: 'background: linear-gradient(135deg, #BFDBFE 0%, #93C5FD 100%); border-bottom: 1.5px dashed #2563EB; color: #1E3A8A;',
-          orange: 'background: linear-gradient(135deg, #FED7AA 0%, #FDBA74 100%); border-bottom: 1.5px dashed #EA580C; color: #7C2D12;',
-          rose: 'background: linear-gradient(135deg, #FECDD3 0%, #FDA4AF 100%); border-bottom: 1.5px dashed #E11D48; color: #881337;',
-          gray: 'background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%); border-bottom: 1.5px dashed #6B7280; color: #1F2937;',
-          purple: 'background: linear-gradient(135deg, #E9D5FF 0%, #D8B4FE 100%); border-bottom: 1.5px dashed #9333EA; color: #3B0764;',
-          cyan: 'background: linear-gradient(135deg, #A5F3FC 0%, #67E8F9 100%); border-bottom: 1.5px dashed #0891B2; color: #164E63;',
-          lime: 'background: linear-gradient(135deg, #D9F99D 0%, #BEF264 100%); border-bottom: 1.5px dashed #65A30D; color: #1A2E05;',
-          indigo: 'background: linear-gradient(135deg, #C7D2FE 0%, #A5B4FC 100%); border-bottom: 1.5px dashed #4F46E5; color: #1E1B4B;',
-          stone: 'background: linear-gradient(135deg, #E7E5E4 0%, #D6D3D1 100%); border-bottom: 1.5px dashed #78716C; color: #1C1917;',
-          slate: 'background: linear-gradient(135deg, #CBD5E1 0%, #94A3B8 100%); border-bottom: 1.5px dashed #334155; color: #0F172A;'
+          red: 'background: linear-gradient(135deg, #FCA5A5 0%, #EF4444 100%); border-bottom: 1.5px dashed #991B1B; color: #FFFFFF;',
+          pink: 'background: linear-gradient(135deg, #FBCFE8 0%, #F472B6 100%); border-bottom: 1.5px dashed #DB2777; color: #831843;',
+          orange: 'background: linear-gradient(135deg, #FED7AA 0%, #FB923C 100%); border-bottom: 1.5px dashed #C2410C; color: #7C2D12;',
+          emerald: 'background: linear-gradient(135deg, #A7F3D0 0%, #34D399 100%); border-bottom: 1.5px dashed #059669; color: #064E3B;',
+          blue: 'background: linear-gradient(135deg, #BFDBFE 0%, #60A5FA 100%); border-bottom: 1.5px dashed #1D4ED8; color: #1E3A8A;',
+          cyan: 'background: linear-gradient(135deg, #A5F3FC 0%, #22D3EE 100%); border-bottom: 1.5px dashed #0E7490; color: #164E63;',
+          purple: 'background: linear-gradient(135deg, #E9D5FF 0%, #C084FC 100%); border-bottom: 1.5px dashed #7E22CE; color: #3B0764;',
+          brown: 'background: linear-gradient(135deg, #D6B48C 0%, #92400E 100%); border-bottom: 1.5px dashed #451A03; color: #FFFFFF;',
+          white: 'background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%); border-bottom: 1.5px dashed #94A3B8; color: #0F172A;',
+          gray: 'background: linear-gradient(135deg, #E5E7EB 0%, #9CA3AF 100%); border-bottom: 1.5px dashed #4B5563; color: #111827;',
+          black: 'background: linear-gradient(135deg, #374151 0%, #111827 100%); border-bottom: 1.5px dashed #6B7280; color: #FFFFFF;',
+          rose: 'background: linear-gradient(135deg, #FBCFE8 0%, #F472B6 100%); border-bottom: 1.5px dashed #DB2777; color: #831843;'
         };
         const tagStyle = tagThemes[a.tagColor || 'amber'] || tagThemes.amber;
 
@@ -2061,42 +2280,45 @@
         return `
           <div class="ear-tag-card flex flex-col justify-between ${herdSelectMode ? 'cursor-pointer select-none' : ''} ${isSelected ? 'ring-2 ring-emerald-600 border-emerald-600' : ''}" ${herdSelectMode ? `data-toggle-herd-card="${escapeHtml(a.id)}"` : ''}>
             <div>
-              <div class="ear-tag-header" style="${tagStyle}">
+              <div class="ear-tag-header px-2.5 sm:px-4" style="${tagStyle}">
                 <span class="ear-tag-hole"></span>
-                <div class="w-full flex items-center justify-between gap-2">
-                  <span class="flex items-center gap-2">
-                    ${herdSelectMode ? `<input type="checkbox" data-herd-select-cb="${escapeHtml(a.id)}" class="w-4 h-4 accent-emerald-700 rounded cursor-pointer" ${isSelected ? 'checked' : ''} />` : ''}
-                    <span class="text-lg font-extrabold tracking-wide">رقم ${escapeHtml(a.id)}</span>
+                <div class="w-full flex items-center justify-between gap-1">
+                  <span class="flex items-center gap-1.5 min-w-0">
+                    ${herdSelectMode ? `<input type="checkbox" data-herd-select-cb="${escapeHtml(a.id)}" class="w-4 h-4 accent-emerald-700 rounded cursor-pointer shrink-0" ${isSelected ? 'checked' : ''} />` : ''}
+                    <span class="text-sm sm:text-lg font-extrabold tracking-wide truncate">رقم ${escapeHtml(a.id)}</span>
                   </span>
-                  <span class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full border ${statusColor}">${escapeHtml(a.status)}</span>
+                  <span class="text-[10px] sm:text-[11px] font-extrabold px-1.5 sm:px-2.5 py-0.5 rounded-full border shrink-0 ${statusColor}">${escapeHtml(a.status)}</span>
                 </div>
               </div>
 
-              <div class="p-4 space-y-2.5">
-                <div class="flex items-center justify-between gap-2">
-                  <h3 class="text-base font-extrabold text-gray-900">${escapeHtml(a.breed)}</h3>
-                  <div class="flex items-center gap-1.5 shrink-0">
-                    ${a.birthDate ? `<span class="text-[11px] font-extrabold px-2 py-0.5 rounded-lg bg-amber-50 text-amber-900 border border-amber-200">${escapeHtml(getLivestockAgeStage(a.birthDate, a.type, a.gender))}</span>` : ''}
-                    <span class="text-xs font-bold px-2.5 py-0.5 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200">${escapeHtml(a.gender)}</span>
+              <div class="p-2.5 sm:p-4 space-y-2">
+                <div class="flex flex-wrap items-center justify-between gap-1">
+                  <h3 class="text-xs sm:text-base font-extrabold text-gray-900">${escapeHtml(a.breed)}</h3>
+                  <div class="flex items-center gap-1 shrink-0">
+                    ${(a.ageStage || a.birthDate) ? `<span class="text-[10px] sm:text-[11px] font-extrabold px-1.5 sm:px-2 py-0.5 rounded-lg bg-amber-50 text-amber-900 border border-amber-200">${escapeHtml(a.ageStage ? formatManualStageLabel(a.ageStage, a.type, a.gender) : getLivestockAgeStage(a.birthDate, a.type, a.gender))}</span>` : ''}
+                    <span class="text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200">${escapeHtml(a.gender)}</span>
                   </div>
                 </div>
 
-                <div class="text-xs text-gray-600 space-y-1.5 bg-gray-50/80 p-2.5 rounded-xl border border-gray-100">
-                  ${a.birthDate ? `<p><span class="font-bold text-gray-800">العمر / التاريخ:</span> <span class="font-extrabold text-emerald-800">${escapeHtml(formatAgeFromISO(a.birthDate))}</span> <span class="date-badge">${escapeHtml(formatArabicDate(a.birthDate))}</span></p>` : ''}
-                  <p>
-                    <span class="font-bold text-gray-800">الأم:</span> ${a.motherId ? escapeHtml(a.motherId) : 'غير مسجلة'}
-                    <span class="mx-1 text-gray-300">|</span>
-                    <span class="font-bold text-gray-800">الأب:</span> ${a.fatherId ? escapeHtml(a.fatherId) : 'غير مسجل'}
+                <div class="text-[11px] sm:text-xs text-gray-600 space-y-1 bg-gray-50/80 p-2 rounded-xl border border-gray-100">
+                  ${a.birthDate ? `<p><span class="font-bold text-gray-800">العمر:</span> <span class="font-extrabold text-emerald-800">${escapeHtml(formatAgeFromISO(a.birthDate))}</span></p>` : ''}
+                  <p class="truncate">
+                    <span class="font-bold text-gray-800">الأم:</span> ${a.motherId ? escapeHtml(a.motherId) : '—'}
+                    <span class="mx-0.5 text-gray-300">|</span>
+                    <span class="font-bold text-gray-800">الأب:</span> ${a.fatherId ? escapeHtml(a.fatherId) : '—'}
                   </p>
-                  ${children.length > 0 ? `<p class="text-emerald-700 font-bold">المواليد: ${children.map(c => c.id).join('، ')}</p>` : ''}
+                  ${children.length > 0 ? `<p class="text-emerald-700 font-bold truncate">المواليد: ${children.map(c => c.id).join('، ')}</p>` : ''}
                 </div>
-                ${a.notes ? `<p class="text-xs text-gray-500">${escapeHtml(a.notes)}</p>` : ''}
+                ${a.notes ? `<p class="text-[11px] text-gray-500 line-clamp-2">${escapeHtml(a.notes)}</p>` : ''}
               </div>
             </div>
 
-            <div class="flex items-center justify-end gap-2 px-4 py-2.5 bg-gray-50/60 border-t border-gray-100">
-              <button type="button" data-edit-animal="${escapeHtml(a.id)}" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white hover:bg-gray-100 text-gray-700 border border-gray-200">تعديل</button>
-              <button type="button" data-delete-animal="${escapeHtml(a.id)}" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-red-50 hover:bg-red-100 text-red-700 border border-red-200">حذف</button>
+            <div class="flex flex-wrap items-center justify-between gap-1 px-2 sm:px-3 py-2 bg-gray-50/60 border-t border-gray-100">
+              <button type="button" data-add-offspring="${escapeHtml(a.id)}" class="px-2 py-1 rounded-lg text-[10px] sm:text-xs font-bold bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200">+ مولود</button>
+              <div class="flex items-center gap-1">
+                <button type="button" data-edit-animal="${escapeHtml(a.id)}" class="px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-bold bg-white hover:bg-gray-100 text-gray-700 border border-gray-200">تعديل</button>
+                <button type="button" data-delete-animal="${escapeHtml(a.id)}" class="px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-bold bg-red-50 hover:bg-red-100 text-red-700 border border-red-200">حذف</button>
+              </div>
             </div>
           </div>
         `;
@@ -2295,13 +2517,50 @@
         }
       });
 
+      const brackets = [
+        { key: 'all', label: 'الكل', min: 0, max: 9999 },
+        { key: '1-10', label: '1 - 10 كجم', min: 0.1, max: 10 },
+        { key: '11-20', label: '11 - 20 كجم', min: 10.01, max: 20 },
+        { key: '21-30', label: '21 - 30 كجم', min: 20.01, max: 30 },
+        { key: '31-40', label: '31 - 40 كجم', min: 30.01, max: 40 },
+        { key: '41-50', label: '41 - 50 كجم', min: 40.01, max: 50 },
+        { key: '51-60', label: '51 - 60 كجم', min: 50.01, max: 60 }
+      ];
+      if (!window._activeWeightBracket) window._activeWeightBracket = 'all';
+      const bBar = document.getElementById('weightBracketsBar');
+      const bLbl = document.getElementById('weightBracketActiveLabel');
+      if (bBar) {
+        const latestByAnimal = {};
+        state.weights.forEach(w => {
+          if (!latestByAnimal[w.animalId] || w.date > latestByAnimal[w.animalId].date) {
+            latestByAnimal[w.animalId] = w;
+          }
+        });
+        const latestList = Object.values(latestByAnimal);
+        bBar.innerHTML = brackets.map(br => {
+          const cnt = br.key === 'all' ? state.weights.length : latestList.filter(w => w.weight >= br.min && w.weight <= br.max).length;
+          const active = window._activeWeightBracket === br.key;
+          return `<button type="button" data-w-bracket="${br.key}" class="px-2.5 py-1 rounded-xl border text-[11px] font-bold transition ${active ? 'bg-purple-700 text-white border-purple-700 shadow-sm' : 'bg-gray-50 hover:bg-purple-50 text-gray-800 border-gray-200'}">${br.label} (${cnt})</button>`;
+        }).join('');
+        bBar.querySelectorAll('[data-w-bracket]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            window._activeWeightBracket = btn.getAttribute('data-w-bracket');
+            renderWeights();
+          });
+        });
+      }
+      const activeBr = brackets.find(b => b.key === window._activeWeightBracket) || brackets[0];
+      if (bLbl) bLbl.textContent = activeBr.label;
+
       const tbody = document.getElementById('weightsTableBody');
       if (state.weights.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-gray-400">لا توجد قياسات أوزان مسجلة.</td></tr>';
         return;
       }
 
-      const sortedAll = [...state.weights].sort((a, b) => b.date.localeCompare(a.date));
+      const sortedAll = [...state.weights]
+        .filter(w => activeBr.key === 'all' || (w.weight >= activeBr.min && w.weight <= activeBr.max))
+        .sort((a, b) => b.date.localeCompare(a.date));
       tbody.innerHTML = sortedAll.map(w => {
         const sameAnimal = state.weights
           .filter(x => x.animalId === w.animalId && x.date < w.date)
@@ -2507,18 +2766,18 @@
     });
 
     const TAG_COLOR_LIST = [
-      { key: 'amber', name: 'أصفر', cls: 'bg-amber-300' },
-      { key: 'emerald', name: 'أخضر', cls: 'bg-emerald-300' },
-      { key: 'blue', name: 'أزرق', cls: 'bg-blue-300' },
-      { key: 'orange', name: 'برتقالي', cls: 'bg-orange-300' },
-      { key: 'rose', name: 'أحمر / وردي', cls: 'bg-rose-300' },
-      { key: 'gray', name: 'أبيض / رمادي', cls: 'bg-gray-200' },
-      { key: 'purple', name: 'بنفسجي', cls: 'bg-purple-300' },
-      { key: 'cyan', name: 'سماوي', cls: 'bg-cyan-300' },
-      { key: 'lime', name: 'ليموني', cls: 'bg-lime-300' },
-      { key: 'indigo', name: 'نيلي', cls: 'bg-indigo-300' },
-      { key: 'stone', name: 'بيج / بني', cls: 'bg-stone-300' },
-      { key: 'slate', name: 'كحلي / فحمي', cls: 'bg-slate-400' }
+      { key: 'amber', name: 'أصفر', cls: 'bg-amber-300', dot: 'bg-amber-400' },
+      { key: 'red', name: 'أحمر', cls: 'bg-red-500', dot: 'bg-red-500' },
+      { key: 'pink', name: 'وردي', cls: 'bg-pink-300', dot: 'bg-pink-400' },
+      { key: 'orange', name: 'برتقالي', cls: 'bg-orange-400', dot: 'bg-orange-400' },
+      { key: 'emerald', name: 'أخضر', cls: 'bg-emerald-400', dot: 'bg-emerald-500' },
+      { key: 'blue', name: 'أزرق', cls: 'bg-blue-400', dot: 'bg-blue-500' },
+      { key: 'cyan', name: 'سماوي', cls: 'bg-cyan-300', dot: 'bg-cyan-400' },
+      { key: 'purple', name: 'بنفسجي', cls: 'bg-purple-400', dot: 'bg-purple-500' },
+      { key: 'brown', name: 'بني', cls: 'bg-amber-800', dot: 'bg-amber-800' },
+      { key: 'white', name: 'أبيض', cls: 'bg-white', dot: 'bg-white border border-gray-400' },
+      { key: 'gray', name: 'رمادي', cls: 'bg-gray-400', dot: 'bg-gray-400' },
+      { key: 'black', name: 'أسود', cls: 'bg-gray-900', dot: 'bg-gray-900' }
     ];
 
     function setTagColorUI(inputId, _btnSelector, _attrName, color) {
@@ -2600,13 +2859,38 @@
       return isFemale ? 'هرِمة / عودة' : 'هرِم / عود';
     }
 
-    function updateLiveStageBadge(dateId, typeId, genderId, badgeId) {
+    const STAGE_APPROX_MONTHS = {
+      'بهم': 3, 'جذع': 8, 'ثني': 15, 'رباع': 28, 'سديس': 40, 'تام': 54, 'هرم': 78
+    };
+
+    function formatManualStageLabel(stageKey, type, gender) {
+      const isFemale = gender === 'أنثى';
+      const isGoat = type === 'ماعز';
+      if (stageKey === 'بهم') {
+        if (isGoat) return isFemale ? 'بهم (جفرة)' : 'بهم (تيس صغير)';
+        return isFemale ? 'بهم (رخل)' : 'بهم (طلي)';
+      }
+      if (stageKey === 'جذع') return isFemale ? 'جذعة' : 'جذع';
+      if (stageKey === 'ثني') return isFemale ? 'ثنية' : 'ثني';
+      if (stageKey === 'رباع') return isFemale ? 'رباعية' : 'رباع';
+      if (stageKey === 'سديس') return isFemale ? 'سديسة' : 'سديس';
+      if (stageKey === 'تام') return isFemale ? 'تامة (جامعة)' : 'تام (جامع)';
+      if (stageKey === 'هرم') return isFemale ? 'هرِمة / عودة' : 'هرِم / عود';
+      return stageKey || 'غير محدد';
+    }
+
+    function updateLiveStageBadge(dateId, typeId, genderId, badgeId, selectId) {
       const badge = document.getElementById(badgeId);
       if (!badge) return;
-      const iso = document.getElementById(dateId)?.value || todayISO();
       const type = document.getElementById(typeId)?.value || 'ضأن';
       const gender = document.getElementById(genderId)?.value || 'أنثى';
-      badge.textContent = getLivestockAgeStage(iso, type, gender);
+      const manualKey = selectId ? document.getElementById(selectId)?.value : '';
+      if (manualKey) {
+        badge.textContent = formatManualStageLabel(manualKey, type, gender);
+      } else {
+        const iso = document.getElementById(dateId)?.value || todayISO();
+        badge.textContent = getLivestockAgeStage(iso, type, gender);
+      }
     }
 
     function formatAgeFromISO(iso) {
@@ -2665,23 +2949,102 @@
     bindAgeAutoCalc('animalAgeVal', 'animalAgeUnit', 'animalBirthDate');
     bindAgeAutoCalc('bulkAgeVal', 'bulkAgeUnit', 'bulkBirthDate');
 
-    ['animalAgeVal', 'animalAgeUnit', 'animalBirthDate', 'animalType', 'animalGender'].forEach(elId => {
+    ['animalAgeVal', 'animalAgeUnit', 'animalBirthDate', 'animalType', 'animalGender', 'animalStageSelect'].forEach(elId => {
       const el = document.getElementById(elId);
       if (el) {
-        el.addEventListener('input', () => updateLiveStageBadge('animalBirthDate', 'animalType', 'animalGender', 'animalStageBadge'));
-        el.addEventListener('change', () => updateLiveStageBadge('animalBirthDate', 'animalType', 'animalGender', 'animalStageBadge'));
+        el.addEventListener('input', () => updateLiveStageBadge('animalBirthDate', 'animalType', 'animalGender', 'animalStageBadge', 'animalStageSelect'));
+        el.addEventListener('change', () => updateLiveStageBadge('animalBirthDate', 'animalType', 'animalGender', 'animalStageBadge', 'animalStageSelect'));
       }
     });
-    ['bulkAgeVal', 'bulkAgeUnit', 'bulkBirthDate', 'bulkType', 'bulkGender'].forEach(elId => {
+    document.getElementById('animalStageSelect').addEventListener('change', (e) => {
+      const k = e.target.value;
+      if (k && STAGE_APPROX_MONTHS[k]) {
+        const m = STAGE_APPROX_MONTHS[k];
+        document.getElementById('animalAgeVal').value = m;
+        document.getElementById('animalAgeUnit').value = 'months';
+        syncMaghnamSelectTrigger(document.getElementById('animalAgeUnit'));
+        const iso = computeBirthDateFromAge(m, 'months');
+        if (iso) setDateValue('animalBirthDate', iso);
+      }
+      updateLiveStageBadge('animalBirthDate', 'animalType', 'animalGender', 'animalStageBadge', 'animalStageSelect');
+    });
+
+    ['bulkAgeVal', 'bulkAgeUnit', 'bulkBirthDate', 'bulkType', 'bulkGender', 'bulkStageSelect'].forEach(elId => {
       const el = document.getElementById(elId);
       if (el) {
-        el.addEventListener('input', () => updateLiveStageBadge('bulkBirthDate', 'bulkType', 'bulkGender', 'bulkStageBadge'));
-        el.addEventListener('change', () => updateLiveStageBadge('bulkBirthDate', 'bulkType', 'bulkGender', 'bulkStageBadge'));
+        el.addEventListener('input', () => updateLiveStageBadge('bulkBirthDate', 'bulkType', 'bulkGender', 'bulkStageBadge', 'bulkStageSelect'));
+        el.addEventListener('change', () => updateLiveStageBadge('bulkBirthDate', 'bulkType', 'bulkGender', 'bulkStageBadge', 'bulkStageSelect'));
       }
+    });
+    document.getElementById('bulkStageSelect').addEventListener('change', (e) => {
+      const k = e.target.value;
+      if (k && STAGE_APPROX_MONTHS[k]) {
+        const m = STAGE_APPROX_MONTHS[k];
+        document.getElementById('bulkAgeVal').value = m;
+        document.getElementById('bulkAgeUnit').value = 'months';
+        syncMaghnamSelectTrigger(document.getElementById('bulkAgeUnit'));
+        const iso = computeBirthDateFromAge(m, 'months');
+        if (iso) setDateValue('bulkBirthDate', iso);
+      }
+      updateLiveStageBadge('bulkBirthDate', 'bulkType', 'bulkGender', 'bulkStageBadge', 'bulkStageSelect');
+    });
+
+    // مستمعات خيار الإضافة السريعة للحلال (فردي أو جماعي)
+    document.getElementById('btnQuickAddAnimalChoice').addEventListener('click', () => {
+      openModal('modalQuickAddAnimalChoice');
+    });
+    document.getElementById('btnChoiceSingleAnimal').addEventListener('click', () => {
+      closeAllModals();
+      switchTab('herd');
+      resetAnimalForm();
+      openModal('modalAnimal');
+    });
+    document.getElementById('btnChoiceBulkAnimal').addEventListener('click', () => {
+      closeAllModals();
+      switchTab('herd');
+      document.getElementById('btnOpenBulkAnimal').click();
     });
 
     let activeAnimalPickInputId = null;
     let activeAnimalPickGender = '';
+    let animalPickerMultiMode = false;
+    const animalPickerMultiSet = new Set();
+
+    function parseHealthSingleIds() {
+      const raw = document.getElementById('healthAnimalId')?.value || '';
+      return [...new Set(raw.split(/[,،\s]+/).map(x => x.trim()).filter(Boolean))];
+    }
+
+    function renderHealthPickedTags() {
+      const box = document.getElementById('healthPickedTagsBox');
+      if (!box) return;
+      const ids = parseHealthSingleIds();
+      if (ids.length === 0) {
+        box.innerHTML = '';
+        return;
+      }
+      box.innerHTML = ids.map(id => `
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-bold">
+          <span>رقم ${escapeHtml(id)}</span>
+          <button type="button" data-remove-health-id="${escapeHtml(id)}" class="text-emerald-700 hover:text-red-600 font-extrabold leading-none">&times;</button>
+        </span>
+      `).join('');
+      box.querySelectorAll('[data-remove-health-id]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const rm = btn.getAttribute('data-remove-health-id');
+          const next = parseHealthSingleIds().filter(x => x !== rm);
+          document.getElementById('healthAnimalId').value = next.join('، ');
+          renderHealthPickedTags();
+        });
+      });
+    }
+
+    document.getElementById('healthAnimalId').addEventListener('input', renderHealthPickedTags);
+
+    function updateAnimalPickerMultiCount() {
+      const el = document.getElementById('animalPickerMultiCount');
+      if (el) el.textContent = `المحدد: ${animalPickerMultiSet.size}`;
+    }
 
     function renderAnimalPickerList() {
       const q = document.getElementById('animalPickerSearch').value.trim().toLowerCase();
@@ -2693,32 +3056,44 @@
       });
 
       const dotMap = {
-        amber: 'bg-amber-400', emerald: 'bg-emerald-500', blue: 'bg-blue-500',
-        orange: 'bg-orange-400', rose: 'bg-rose-500', gray: 'bg-gray-400',
-        purple: 'bg-purple-500', cyan: 'bg-cyan-500', lime: 'bg-lime-500',
-        indigo: 'bg-indigo-500', stone: 'bg-stone-500', slate: 'bg-slate-600'
+        amber: 'bg-amber-400', red: 'bg-red-500', pink: 'bg-pink-400',
+        orange: 'bg-orange-400', emerald: 'bg-emerald-500', blue: 'bg-blue-500',
+        cyan: 'bg-cyan-400', purple: 'bg-purple-500', brown: 'bg-amber-800',
+        white: 'bg-white border border-gray-400', gray: 'bg-gray-400', black: 'bg-gray-900'
       };
 
       if (items.length === 0) {
         list.innerHTML = `<p class="text-center text-xs text-gray-400 py-5">لا توجد رؤوس مطابقة في الحلال.</p>`;
       } else {
-        list.innerHTML = items.map(a => `
-          <button type="button" data-picked-id="${escapeHtml(a.id)}" class="w-full text-right px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-400 flex items-center justify-between gap-2 transition">
+        list.innerHTML = items.map(a => {
+          const isChecked = animalPickerMultiMode && animalPickerMultiSet.has(a.id);
+          return `
+          <button type="button" data-picked-id="${escapeHtml(a.id)}" class="w-full text-right px-3 py-2.5 rounded-xl border ${isChecked ? 'border-emerald-600 bg-emerald-50' : 'border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-400'} flex items-center justify-between gap-2 transition">
             <span class="flex items-center gap-2 min-w-0">
+              ${animalPickerMultiMode ? `<input type="checkbox" class="w-4 h-4 accent-emerald-700 pointer-events-none shrink-0" ${isChecked ? 'checked' : ''} />` : ''}
               <span class="w-3 h-3 rounded-full ${dotMap[a.tagColor || 'amber'] || 'bg-amber-400'} shrink-0"></span>
               <span class="font-extrabold text-sm text-gray-900">رقم ${escapeHtml(a.id)}</span>
               <span class="text-xs text-gray-500 truncate">${escapeHtml(a.type)} - ${escapeHtml(a.breed)}</span>
             </span>
             <span class="text-[11px] font-bold px-2 py-0.5 rounded-lg bg-white border border-gray-200 text-emerald-800 shrink-0">${escapeHtml(a.gender)}</span>
           </button>
-        `).join('');
+        `;
+        }).join('');
         list.querySelectorAll('[data-picked-id]').forEach(btn => {
           btn.addEventListener('click', () => {
-            if (activeAnimalPickInputId) {
-              document.getElementById(activeAnimalPickInputId).value = btn.getAttribute('data-picked-id');
+            const picked = btn.getAttribute('data-picked-id');
+            if (animalPickerMultiMode) {
+              if (animalPickerMultiSet.has(picked)) animalPickerMultiSet.delete(picked);
+              else animalPickerMultiSet.add(picked);
+              updateAnimalPickerMultiCount();
+              renderAnimalPickerList();
+            } else {
+              if (activeAnimalPickInputId) {
+                document.getElementById(activeAnimalPickInputId).value = picked;
+              }
+              const m = document.getElementById('modalAnimalPicker');
+              m.classList.add('hidden'); m.classList.remove('flex');
             }
-            const m = document.getElementById('modalAnimalPicker');
-            m.classList.add('hidden'); m.classList.remove('flex');
           });
         });
       }
@@ -2726,6 +3101,8 @@
 
     document.querySelectorAll('[data-pick-animal]').forEach(btn => {
       btn.addEventListener('click', () => {
+        animalPickerMultiMode = false;
+        document.getElementById('animalPickerMultiFooter').classList.add('hidden');
         activeAnimalPickInputId = btn.getAttribute('data-pick-animal');
         activeAnimalPickGender = btn.getAttribute('data-pick-gender') || '';
         document.getElementById('animalPickerTitle').textContent = btn.getAttribute('data-pick-title') || 'اختر رقم الرأس';
@@ -2734,6 +3111,28 @@
         const m = document.getElementById('modalAnimalPicker');
         m.classList.remove('hidden'); m.classList.add('flex');
       });
+    });
+
+    document.getElementById('btnPickMultiHealthAnimals').addEventListener('click', () => {
+      animalPickerMultiMode = true;
+      animalPickerMultiSet.clear();
+      parseHealthSingleIds().forEach(id => animalPickerMultiSet.add(id));
+      activeAnimalPickInputId = 'healthAnimalId';
+      activeAnimalPickGender = '';
+      document.getElementById('animalPickerTitle').textContent = 'تحديد رأس أو أكثر';
+      document.getElementById('animalPickerSearch').value = '';
+      document.getElementById('animalPickerMultiFooter').classList.remove('hidden');
+      updateAnimalPickerMultiCount();
+      renderAnimalPickerList();
+      const m = document.getElementById('modalAnimalPicker');
+      m.classList.remove('hidden'); m.classList.add('flex');
+    });
+
+    document.getElementById('btnConfirmAnimalPickerMulti').addEventListener('click', () => {
+      document.getElementById('healthAnimalId').value = Array.from(animalPickerMultiSet).join('، ');
+      renderHealthPickedTags();
+      const m = document.getElementById('modalAnimalPicker');
+      m.classList.add('hidden'); m.classList.remove('flex');
     });
     document.getElementById('animalPickerSearch').addEventListener('input', renderAnimalPickerList);
     document.getElementById('btnCloseAnimalPicker').addEventListener('click', () => {
@@ -2760,7 +3159,9 @@
       syncMaghnamSelectTrigger(document.getElementById('animalType'));
       syncMaghnamSelectTrigger(document.getElementById('animalGender'));
       syncMaghnamSelectTrigger(document.getElementById('animalStatus'));
-      updateLiveStageBadge('animalBirthDate', 'animalType', 'animalGender', 'animalStageBadge');
+      document.getElementById('animalStageSelect').value = '';
+      syncMaghnamSelectTrigger(document.getElementById('animalStageSelect'));
+      updateLiveStageBadge('animalBirthDate', 'animalType', 'animalGender', 'animalStageBadge', 'animalStageSelect');
     }
 
     document.getElementById('btnOpenAddAnimal').addEventListener('click', () => {
@@ -2780,8 +3181,10 @@
       document.getElementById('healthKind').value = 'تطعيم';
       document.getElementById('healthDoseType').value = 'جرعة تأسيسية';
       updateHealthDoseVisibility();
+      renderVaccineChips('');
+      renderHealthPickedTags();
       setDateValue('healthDate', todayISO());
-      setDateValue('healthNextDate', '');
+      setHealthNextMonths(0);
       syncMaghnamSelectTrigger(document.getElementById('healthKind'));
       syncMaghnamSelectTrigger(document.getElementById('healthDoseType'));
     }
@@ -2875,8 +3278,112 @@
       showToast('تمت إضافة العلف الجديد للقائمة.');
     });
 
+    const SUPPLIER_PRODUCTS = {
+      'أراسكو (وافي)': [
+        { name: 'علف وافي متكامل', unit: 'كيس (50 كجم)' },
+        { name: 'علف بادئ حملان (بهم)', unit: 'كيس (50 كجم)' },
+        { name: 'علف تسمين وافي', unit: 'كيس (50 كجم)' },
+        { name: 'وفير من الشعير', unit: 'كيس (50 كجم)' }
+      ],
+      'شركة المتحدة للأعلاف': [
+        { name: 'مكعبات المتحدة تسمين', unit: 'كيس (50 كجم)' },
+        { name: 'علف بهم المتحدة', unit: 'كيس (50 كجم)' },
+        { name: 'علف أمهات المتحدة', unit: 'كيس (50 كجم)' },
+        { name: 'شعير مجروش المتحدة', unit: 'كيس (50 كجم)' }
+      ],
+      'سالك': [
+        { name: 'شعير مستورد', unit: 'كيس (50 كجم)' },
+        { name: 'ذرة صفراء', unit: 'كيس (50 كجم)' }
+      ],
+      'سوق الأعلاف المحلي': [
+        { name: 'شعير', unit: 'كيلو (كجم)' },
+        { name: 'برسيم', unit: 'ربطة / بالة' },
+        { name: 'رودس', unit: 'ربطة / بالة' },
+        { name: 'ذرة', unit: 'كيلو (كجم)' }
+      ],
+      'مزارع الأعلاف': [
+        { name: 'برسيم صافي', unit: 'ربطة / بالة' },
+        { name: 'رودس', unit: 'ربطة / بالة' }
+      ]
+    };
+
+    function renderSupplierProducts(supName) {
+      const box = document.getElementById('feedSupplierProductsBox');
+      const grid = document.getElementById('feedSupplierProductsGrid');
+      const customAdd = document.getElementById('customSupProdAddBox');
+      if (customAdd) customAdd.classList.add('hidden');
+      if (!box || !grid || !supName || supName === 'أخرى') {
+        if (box) box.classList.add('hidden');
+        return;
+      }
+      const baseProds = SUPPLIER_PRODUCTS[supName] || [];
+      const customProds = ((state.customSupplierProducts || {})[supName] || []).map(name => ({ name, unit: inferFeedUnit(name) }));
+      const prods = [...baseProds, ...customProds];
+      box.classList.remove('hidden');
+      if (prods.length === 0) {
+        grid.innerHTML = '<span class="text-[11px] text-gray-500">لا توجد منتجات مضافة لهذه الشركة بعد، اضغط + إضافة منتج للشركة.</span>';
+        return;
+      }
+      grid.innerHTML = prods.map(pr => `
+        <button type="button" data-sup-prod="${escapeHtml(pr.name)}" data-sup-unit="${escapeHtml(pr.unit)}" class="px-2.5 py-1 rounded-lg border border-emerald-200 bg-white hover:bg-emerald-700 hover:text-white text-emerald-950 text-[11px] font-bold transition">${escapeHtml(pr.name)}</button>
+      `).join('');
+      grid.querySelectorAll('[data-sup-prod]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const pName = btn.getAttribute('data-sup-prod');
+          const pUnit = btn.getAttribute('data-sup-unit');
+          document.getElementById('feedType').value = pName;
+          selectFeedTypeUI(pName, false);
+          if (pUnit) {
+            const uSel = document.getElementById('feedUnit');
+            uSel.value = pUnit;
+            syncMaghnamSelectTrigger(uSel);
+          }
+          showToast('تم اختيار: ' + pName);
+        });
+      });
+    }
+
+    function recalcFeedTotalFromUnit() {
+      const qty = parseFloat(normalizeDigits(document.getElementById('feedAmountVal').value));
+      const unitP = parseFloat(normalizeDigits(document.getElementById('feedUnitPrice').value));
+      if (!isNaN(qty) && !isNaN(unitP) && qty >= 0 && unitP >= 0) {
+        document.getElementById('feedCost').value = (qty * unitP).toFixed(2).replace(/\.00$/, '');
+      }
+    }
+    document.getElementById('feedAmountVal').addEventListener('input', recalcFeedTotalFromUnit);
+    document.getElementById('feedUnitPrice').addEventListener('input', recalcFeedTotalFromUnit);
+
+    document.getElementById('btnToggleCustomSupProd').addEventListener('click', () => {
+      document.getElementById('customSupProdAddBox').classList.toggle('hidden');
+    });
+    document.getElementById('btnSaveCustomSupProd').addEventListener('click', () => {
+      const supName = document.getElementById('feedSupplier').value;
+      const prodName = document.getElementById('newCustomSupProdInput').value.trim();
+      if (!supName || supName === 'أخرى') {
+        showToast('اختر الشركة أولاً.');
+        return;
+      }
+      if (!prodName) {
+        showToast('اكتب اسم المنتج أولاً.');
+        return;
+      }
+      if (!state.customSupplierProducts) state.customSupplierProducts = {};
+      if (!Array.isArray(state.customSupplierProducts[supName])) state.customSupplierProducts[supName] = [];
+      if (!state.customSupplierProducts[supName].includes(prodName)) {
+        state.customSupplierProducts[supName].push(prodName);
+        saveState();
+      }
+      document.getElementById('newCustomSupProdInput').value = '';
+      document.getElementById('customSupProdAddBox').classList.add('hidden');
+      renderSupplierProducts(supName);
+      document.getElementById('feedType').value = prodName;
+      selectFeedTypeUI(prodName, true);
+      showToast('تم حفظ المنتج ضمن منتجات ' + supName);
+    });
+
     document.getElementById('feedSupplier').addEventListener('change', (e) => {
       document.getElementById('feedSupplierCustom').classList.toggle('hidden', e.target.value !== 'أخرى');
+      renderSupplierProducts(e.target.value);
     });
 
     const DEFAULT_BREEDS = ['حري', 'نعيمي', 'نجدي', 'سواكني', 'عارضي', 'شامي'];
@@ -2960,6 +3467,8 @@
       document.getElementById('modalFeedTitle').textContent = 'تسجيل صرف أعلاف';
       document.getElementById('customFeedAddBox').classList.add('hidden');
       document.getElementById('feedSupplierCustom').classList.add('hidden');
+      document.getElementById('feedSupplierProductsBox').classList.add('hidden');
+      document.getElementById('feedUnitPrice').value = '';
       document.getElementById('feedUnitAutoHint').classList.add('hidden');
       renderFeedTypeGrid();
       selectFeedTypeUI('شعير', true);
@@ -3028,6 +3537,7 @@
         breed: document.getElementById('animalBreed').value.trim(),
         gender: document.getElementById('animalGender').value,
         birthDate: document.getElementById('animalBirthDate').value,
+        ageStage: document.getElementById('animalStageSelect').value || '',
         status: document.getElementById('animalStatus').value,
         motherId: document.getElementById('animalMotherId').value.trim(),
         fatherId: document.getElementById('animalFatherId').value.trim(),
@@ -3049,10 +3559,98 @@
       closeAllModals();
     });
 
+    const DEFAULT_VACCINES = [
+      'دموي',
+      'معوي',
+      'مشترك دموي مع معوي',
+      'رئوي',
+      'طاعون المجترات',
+      'الحمى القلاعية',
+      'جدري الأغنام',
+      'الحمى المالطية',
+      'إبرة الديدان'
+    ];
+
+    function renderVaccineChips(selectedVac) {
+      const grid = document.getElementById('healthVaccineGrid');
+      if (!grid) return;
+      const allVacs = [...new Set([...DEFAULT_VACCINES, ...(state.customVaccines || [])])];
+      grid.innerHTML = allVacs.map(v => {
+        const active = selectedVac && v === selectedVac;
+        return `<button type="button" data-vac="${escapeHtml(v)}" class="vac-pick-btn px-2.5 py-1 rounded-lg border text-[11px] font-bold transition ${active ? 'bg-blue-700 text-white border-blue-700' : 'bg-white hover:bg-blue-50 text-gray-800 border-gray-200'}">${escapeHtml(v)}</button>`;
+      }).join('');
+      grid.querySelectorAll('.vac-pick-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const val = btn.getAttribute('data-vac');
+          document.getElementById('healthTitle').value = val;
+          renderVaccineChips(val);
+        });
+      });
+    }
+
+    document.getElementById('btnToggleCustomVaccine').addEventListener('click', () => {
+      document.getElementById('customVaccineAddBox').classList.toggle('hidden');
+    });
+    document.getElementById('btnSaveCustomVaccine').addEventListener('click', () => {
+      const val = document.getElementById('newCustomVaccineInput').value.trim();
+      if (!val) { showToast('يرجى كتابة اسم التطعيم.'); return; }
+      if (!state.customVaccines) state.customVaccines = [];
+      if (!DEFAULT_VACCINES.includes(val) && !state.customVaccines.includes(val)) {
+        state.customVaccines.push(val);
+        saveState();
+      }
+      document.getElementById('newCustomVaccineInput').value = '';
+      document.getElementById('customVaccineAddBox').classList.add('hidden');
+      document.getElementById('healthTitle').value = val;
+      renderVaccineChips(val);
+      showToast('تم حفظ التطعيم في القائمة بشكل دائم.');
+    });
+
+    function addMonthsISO(baseISO, months) {
+      if (!months || months <= 0) return '';
+      const d = new Date(baseISO || todayISO());
+      d.setMonth(d.getMonth() + Number(months));
+      return d.toISOString().split('T')[0];
+    }
+
+    function setHealthNextMonths(m) {
+      const months = Math.max(0, parseInt(m, 10) || 0);
+      const inp = document.getElementById('healthNextMonthsInput');
+      if (inp) inp.value = months > 0 ? months : '';
+      const base = document.getElementById('healthDate')?.value || todayISO();
+      const nextIso = months > 0 ? addMonthsISO(base, months) : '';
+      document.getElementById('healthNextDate').value = nextIso;
+      const prev = document.getElementById('healthNextDatePreview');
+      if (prev) prev.textContent = nextIso ? formatArabicDate(nextIso) : 'بدون موعد';
+      document.querySelectorAll('.next-month-chip').forEach(btn => {
+        const bm = parseInt(btn.getAttribute('data-next-months'), 10);
+        const active = bm === months;
+        btn.className = `next-month-chip px-2 py-1 rounded-lg border text-[11px] font-bold transition ${active ? 'bg-blue-700 text-white border-blue-700' : 'bg-gray-50 hover:bg-blue-50 text-gray-700 border-gray-200'}`;
+      });
+    }
+
+    document.querySelectorAll('.next-month-chip').forEach(btn => {
+      btn.addEventListener('click', () => setHealthNextMonths(btn.getAttribute('data-next-months')));
+    });
+    document.getElementById('healthNextMonthsInput').addEventListener('input', (e) => {
+      setHealthNextMonths(e.target.value || 0);
+    });
+    document.getElementById('healthDate').addEventListener('change', () => {
+      const m = document.getElementById('healthNextMonthsInput').value;
+      if (m) setHealthNextMonths(m);
+    });
+
     function updateHealthDoseVisibility() {
       const kind = document.getElementById('healthKind').value;
-      const wrap = document.getElementById('healthDoseWrap');
-      wrap.classList.toggle('hidden', kind !== 'تطعيم');
+      const isVac = kind === 'تطعيم';
+      document.getElementById('healthDoseWrap').classList.toggle('hidden', !isVac);
+      document.getElementById('healthVaccineSection').classList.toggle('hidden', !isVac);
+      document.getElementById('btnToggleCustomVaccine').classList.toggle('hidden', !isVac);
+      document.getElementById('healthMedicineSection').classList.toggle('hidden', isVac);
+      const lbl = document.getElementById('healthTitleLabel');
+      const titleInp = document.getElementById('healthTitle');
+      if (lbl) lbl.textContent = isVac ? 'اسم التطعيم *' : (kind === 'علاج' ? 'اسم الحالة / التشخيص *' : 'عنوان الفحص *');
+      if (titleInp) titleInp.placeholder = isVac ? 'اختر التطعيم أو اكتب الاسم...' : 'مثال: التهاب، حرارة، أو فحص شامل';
     }
     document.getElementById('healthKind').addEventListener('change', updateHealthDoseVisibility);
 
@@ -3072,10 +3670,10 @@
       }
       const selectedSet = new Set(preselectedIds || []);
       const dotColors = {
-        amber: 'bg-amber-400', emerald: 'bg-emerald-500', blue: 'bg-blue-500',
-        orange: 'bg-orange-400', rose: 'bg-rose-500', gray: 'bg-gray-400',
-        purple: 'bg-purple-500', cyan: 'bg-cyan-500', lime: 'bg-lime-500',
-        indigo: 'bg-indigo-500', stone: 'bg-stone-500', slate: 'bg-slate-600'
+        amber: 'bg-amber-400', red: 'bg-red-500', pink: 'bg-pink-400',
+        orange: 'bg-orange-400', emerald: 'bg-emerald-500', blue: 'bg-blue-500',
+        cyan: 'bg-cyan-400', purple: 'bg-purple-500', brown: 'bg-amber-800',
+        white: 'bg-white border border-gray-400', gray: 'bg-gray-400', black: 'bg-gray-900'
       };
       box.innerHTML = animals.map(a => {
         const checked = selectedSet.has(a.id) ? 'checked' : '';
@@ -3168,11 +3766,13 @@
           targetLabel = scope === 'females' ? 'جميع الإناث' : 'جميع الذكور';
         }
       } else {
-        targetLabel = document.getElementById('healthAnimalId').value.trim();
-        if (!targetLabel) {
-          showToast('يرجى إدخال رقم الرأس.');
+        const picked = parseHealthSingleIds();
+        if (picked.length === 0) {
+          showToast('يرجى إدخال أو تحديد رقم الرأس.');
           return;
         }
+        targetIds = picked;
+        targetLabel = picked.join('، ');
       }
 
       const kind = document.getElementById('healthKind').value;
@@ -3254,7 +3854,9 @@
       document.getElementById('bulkAgeVal').value = '';
       document.getElementById('bulkAgeUnit').value = 'months';
       syncMaghnamSelectTrigger(document.getElementById('bulkAgeUnit'));
-      updateLiveStageBadge('bulkBirthDate', 'bulkType', 'bulkGender', 'bulkStageBadge');
+      document.getElementById('bulkStageSelect').value = '';
+      syncMaghnamSelectTrigger(document.getElementById('bulkStageSelect'));
+      updateLiveStageBadge('bulkBirthDate', 'bulkType', 'bulkGender', 'bulkStageBadge', 'bulkStageSelect');
       updateBulkAutoPreview();
       updateBulkPastePreview();
       openModal('modalBulkAnimal');
@@ -3302,6 +3904,7 @@
             breed,
             gender,
             birthDate,
+            ageStage: document.getElementById('bulkStageSelect').value || '',
             status,
             tagColor: document.getElementById('bulkTagColor').value || 'amber',
             motherId: '',
@@ -3374,6 +3977,7 @@
         unit,
         amount: `${amountVal} ${unit}`.trim(),
         date: document.getElementById('feedDate').value,
+        unitPrice: parseFloat(document.getElementById('feedUnitPrice').value) || 0,
         cost: parseFloat(document.getElementById('feedCost').value) || 0,
         notes: document.getElementById('feedNotes').value.trim()
       };
@@ -3441,6 +4045,22 @@
     });
 
     document.addEventListener('click', (e) => {
+      const offspringParentId = e.target.getAttribute('data-add-offspring');
+      if (offspringParentId) {
+        const parent = state.herd.find(x => x.id === offspringParentId);
+        if (parent) {
+          resetAnimalForm();
+          if (parent.gender === 'أنثى') document.getElementById('animalMotherId').value = parent.id;
+          else document.getElementById('animalFatherId').value = parent.id;
+          document.getElementById('animalType').value = parent.type;
+          syncMaghnamSelectTrigger(document.getElementById('animalType'));
+          syncQuickChipsForSelect('animalType');
+          renderBreedChips('animalBreedGrid', 'animalBreed', parent.breed || 'حري');
+          openModal('modalAnimal');
+        }
+        return;
+      }
+
       const editId = e.target.getAttribute('data-edit-animal');
       if (editId) {
         const a = state.herd.find(x => x.id === editId);
@@ -3453,7 +4073,9 @@
           document.getElementById('animalGender').value = a.gender;
           setDateValue('animalBirthDate', a.birthDate || '');
           syncAgeInputsFromISO(a.birthDate || '', 'animalAgeVal', 'animalAgeUnit');
-          updateLiveStageBadge('animalBirthDate', 'animalType', 'animalGender', 'animalStageBadge');
+          document.getElementById('animalStageSelect').value = a.ageStage || '';
+          syncMaghnamSelectTrigger(document.getElementById('animalStageSelect'));
+          updateLiveStageBadge('animalBirthDate', 'animalType', 'animalGender', 'animalStageBadge', 'animalStageSelect');
           document.getElementById('animalStatus').value = a.status;
           document.getElementById('animalMotherId').value = a.motherId || '';
           document.getElementById('animalFatherId').value = a.fatherId || '';
@@ -3480,15 +4102,26 @@
           const inferredScope = h.scope || (h.animalId === 'القطيع كامل' ? 'all' : h.animalId === 'جميع الإناث' ? 'females' : h.animalId === 'جميع الذكور' ? 'males' : 'single');
           const inferredGroup = h.groupMode || 'all';
           setHealthScope(inferredScope, inferredGroup, h.targetIds || []);
-          if (inferredScope === 'single') document.getElementById('healthAnimalId').value = h.animalId || '';
+          if (inferredScope === 'single') {
+            document.getElementById('healthAnimalId').value = (h.targetIds && h.targetIds.length) ? h.targetIds.join('، ') : (h.animalId || '');
+            renderHealthPickedTags();
+          }
           document.getElementById('healthKind').value = h.kind || 'تطعيم';
           document.getElementById('healthDoseType').value = h.doseType || '';
           updateHealthDoseVisibility();
           document.getElementById('healthMedicine').value = h.medicine || '';
           renderMedicineChips(h.medicine || '');
           document.getElementById('healthTitle').value = h.title || '';
+          renderVaccineChips(h.title || '');
           setDateValue('healthDate', h.date || '');
-          setDateValue('healthNextDate', h.nextDate || '');
+          if (h.nextDate && h.date) {
+            const mDiff = Math.max(0, Math.round((new Date(h.nextDate) - new Date(h.date)) / (30.4375 * 86400000)));
+            setHealthNextMonths(mDiff);
+            document.getElementById('healthNextDate').value = h.nextDate;
+            document.getElementById('healthNextDatePreview').textContent = formatArabicDate(h.nextDate);
+          } else {
+            setHealthNextMonths(0);
+          }
           document.getElementById('healthCost').value = h.cost > 0 ? h.cost : '';
           document.getElementById('healthNotes').value = h.notes || '';
           openModal('modalHealth');
@@ -3538,7 +4171,9 @@
           document.getElementById('feedAmountVal').value = f.amountVal || (f.amount || '').split(' ')[0] || '';
           if (f.unit) document.getElementById('feedUnit').value = f.unit;
           setDateValue('feedDate', f.date || '');
+          document.getElementById('feedUnitPrice').value = f.unitPrice > 0 ? f.unitPrice : '';
           document.getElementById('feedCost').value = f.cost > 0 ? f.cost : '';
+          renderSupplierProducts(f.supplier || '');
           document.getElementById('feedNotes').value = f.notes || '';
           openModal('modalFeed');
         }
@@ -3779,6 +4414,110 @@
     document.getElementById('herdSearch').addEventListener('input', renderHerd);
     document.getElementById('herdFilterType').addEventListener('change', renderHerd);
     document.getElementById('herdFilterGender').addEventListener('change', renderHerd);
+    document.getElementById('herdFilterColor').addEventListener('change', renderHerd);
+
+    // مزامنة أزرار الاختيار السريع مع القوائم في نافذة إضافة رأس
+    function syncQuickChipsForSelect(selId) {
+      const sel = document.getElementById(selId);
+      const wrap = document.querySelector(`[data-chip-sync="${selId}"]`);
+      if (!sel || !wrap) return;
+      wrap.querySelectorAll('[data-chip-val]').forEach(btn => {
+        const active = btn.getAttribute('data-chip-val') === sel.value;
+        btn.className = active
+          ? 'px-2.5 py-1 rounded-lg border border-emerald-700 bg-emerald-700 text-white text-xs font-extrabold transition'
+          : 'px-2.5 py-1 rounded-lg border border-gray-200 bg-gray-50 hover:bg-emerald-50 text-gray-800 text-xs font-bold transition';
+      });
+    }
+    document.querySelectorAll('[data-chip-sync]').forEach(wrap => {
+      const selId = wrap.getAttribute('data-chip-sync');
+      const sel = document.getElementById(selId);
+      wrap.querySelectorAll('[data-chip-val]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (!sel) return;
+          sel.value = btn.getAttribute('data-chip-val');
+          syncMaghnamSelectTrigger(sel);
+          sel.dispatchEvent(new Event('change', { bubbles: true }));
+          syncQuickChipsForSelect(selId);
+        });
+      });
+      if (sel) sel.addEventListener('change', () => syncQuickChipsForSelect(selId));
+      syncQuickChipsForSelect(selId);
+    });
+
+    // نظام الإشعارات والتنبيهات
+    function getAppNotifications() {
+      const today = todayISO();
+      const limit14 = addDaysISO(today, 14);
+      const items = [];
+      state.health.forEach(h => {
+        if (!h.nextDate) return;
+        if (h.nextDate < today) {
+          items.push({ type: 'overdue', title: `تطعيم متأخر: ${h.title}`, sub: `المستهدف: ${h.animalId} — كان بتاريخ ${formatArabicDate(h.nextDate)}` });
+        } else if (h.nextDate <= limit14) {
+          items.push({ type: 'vaccine', title: `تطعيم قادم: ${h.title}`, sub: `المستهدف: ${h.animalId} — بتاريخ ${formatArabicDate(h.nextDate)}` });
+        }
+      });
+      state.breeding.forEach(b => {
+        if (b.status === 'حامل' && b.dueDate && b.dueDate <= limit14) {
+          items.push({ type: 'birth', title: `ولادة متوقعة للأم ${b.motherId}`, sub: `التاريخ المتوقع: ${formatArabicDate(b.dueDate)}` });
+        }
+      });
+      return items;
+    }
+
+    function updateNotificationBadge() {
+      const badge = document.getElementById('notifBadgeCount');
+      if (!badge) return;
+      const items = getAppNotifications();
+      badge.textContent = items.length;
+      badge.classList.toggle('hidden', items.length === 0);
+    }
+
+    document.getElementById('btnOpenNotifications').addEventListener('click', () => {
+      const items = getAppNotifications();
+      const body = document.getElementById('notificationsListBody');
+      const permEl = document.getElementById('notifPermStatus');
+      if ('Notification' in window) {
+        permEl.textContent = Notification.permission === 'granted'
+          ? 'الإشعارات مفعلة على هذا الجهاز ✓'
+          : Notification.permission === 'denied'
+            ? 'الإشعارات محظورة من إعدادات المتصفح'
+            : 'اضغط لتفعيل تنبيهات المتصفح/الجوال';
+      }
+      if (items.length === 0) {
+        body.innerHTML = '<p class="text-center text-gray-400 py-6">لا توجد إشعارات أو مواعيد عاجلة حالياً.</p>';
+      } else {
+        body.innerHTML = items.map(it => {
+          const cls = it.type === 'overdue' ? 'bg-rose-50 border-rose-200 text-rose-900'
+            : it.type === 'birth' ? 'bg-amber-50 border-amber-200 text-amber-900'
+            : 'bg-blue-50 border-blue-200 text-blue-900';
+          return `<div class="p-3 rounded-xl border ${cls}"><p class="font-extrabold text-xs sm:text-sm">${escapeHtml(it.title)}</p><p class="text-xs opacity-85 mt-0.5">${escapeHtml(it.sub)}</p></div>`;
+        }).join('');
+      }
+      openModal('modalNotifications');
+    });
+
+    document.getElementById('btnEnableBrowserNotifs').addEventListener('click', async () => {
+      if (!('Notification' in window)) {
+        showToast('المتصفح لا يدعم الإشعارات المباشرة.');
+        return;
+      }
+      try {
+        const perm = await Notification.requestPermission();
+        if (perm === 'granted') {
+          const items = getAppNotifications();
+          new Notification('مغنم - إدارة الحلال', {
+            body: items.length > 0 ? `لديك ${items.length} تنبيهات نشطة للتطعيمات والولادات.` : 'تم تفعيل الإشعارات بنجاح.'
+          });
+          document.getElementById('notifPermStatus').textContent = 'الإشعارات مفعلة على هذا الجهاز ✓';
+          showToast('تم تفعيل الإشعارات بنجاح.');
+        } else {
+          showToast('لم يتم منح إذن الإشعارات.');
+        }
+      } catch (e) {
+        showToast('تعذر تفعيل الإشعارات.');
+      }
+    });
     document.getElementById('healthFilterKind').addEventListener('change', renderHealth);
     document.getElementById('healthSearch').addEventListener('input', renderHealth);
     document.getElementById('weightChartAnimalSelect').addEventListener('change', renderWeights);
@@ -3812,6 +4551,8 @@
               customFeeds: Array.isArray(parsed.customFeeds) ? parsed.customFeeds : [],
               customBreeds: Array.isArray(parsed.customBreeds) ? parsed.customBreeds : [],
               customMedicines: Array.isArray(parsed.customMedicines) ? parsed.customMedicines : [],
+            customVaccines: Array.isArray(parsed.customVaccines) ? parsed.customVaccines : [],
+            customSupplierProducts: (parsed.customSupplierProducts && typeof parsed.customSupplierProducts === "object" && !Array.isArray(parsed.customSupplierProducts)) ? parsed.customSupplierProducts : {},
               aiApiKey: (typeof parsed.aiApiKey === 'string' && parsed.aiApiKey.trim()) ? parsed.aiApiKey.trim() : getActiveAiKey()
             };
             saveState();
@@ -4486,6 +5227,7 @@ ${buildMaghnamAiContext()}`;
       const opt = sel.options[sel.selectedIndex] || sel.options[0];
       const lbl = sel._maghnamBtn.querySelector('.ms-label');
       if (lbl) lbl.textContent = opt ? opt.textContent : 'اختر...';
+      if (typeof syncQuickChipsForSelect === 'function' && sel.id) syncQuickChipsForSelect(sel.id);
     }
 
     function openMaghnamSelectModal(sel) {
@@ -4559,4 +5301,4 @@ ${buildMaghnamAiContext()}`;
     renderAll();
   </script>
 </body>
-  </html>
+</html>
