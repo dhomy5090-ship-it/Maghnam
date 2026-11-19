@@ -12,7 +12,7 @@
   <link id="pwaIconLink" rel="icon" type="image/png" href="" />
   <link id="pwaAppleTouchIcon" rel="apple-touch-icon" href="" />
   <link id="pwaManifestLink" rel="manifest" href="data:application/manifest+json,{}" />
-  <title>مغنم V3.0 | إدارة الحلال والأغنام</title>
+  <title>مغنم V3.1 | إدارة الحلال والأغنام</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-app-compat.js"></script>
@@ -631,7 +631,10 @@
           <h2 class="text-xl font-extrabold text-gray-900">الميزانية والمصروفات والأرباح</h2>
           <p class="text-sm text-gray-500">حساب تكلفة الرأس على السنة المالية (تتصفر كل سنة) مع تتبع المبيعات وصافي الربح</p>
         </div>
-        <button type="button" id="btnOpenAddSalary" class="btn-primary px-4 py-2.5 rounded-xl text-sm font-bold">+ إضافة راتب عامل</button>
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" id="btnOpenAddExpense" class="px-4 py-2.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-900 text-sm font-bold">+ إضافة مصروف</button>
+          <button type="button" id="btnOpenAddSalary" class="btn-primary px-4 py-2.5 rounded-xl text-sm font-bold">+ إضافة راتب عامل</button>
+        </div>
       </div>
 
       <div class="card-soft p-2.5 flex flex-wrap items-center justify-between gap-2">
@@ -715,6 +718,26 @@
             </tr>
           </thead>
           <tbody id="salariesTableBody" class="divide-y divide-gray-100"></tbody>
+        </table>
+      </div>
+
+      <!-- سجل المصروفات العامة -->
+      <div class="card-soft overflow-x-auto">
+        <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+          <h3 class="text-sm sm:text-base font-extrabold text-gray-900">سجل المصروفات العامة</h3>
+          <span id="budgetExpenseTotalBadge" class="text-xs font-extrabold text-rose-700">0 ريال</span>
+        </div>
+        <table class="w-full text-sm text-right">
+          <thead class="bg-gray-50 text-gray-600 border-b border-gray-200">
+            <tr>
+              <th class="px-4 py-3 font-bold">التاريخ</th>
+              <th class="px-4 py-3 font-bold">البند / المصروف</th>
+              <th class="px-4 py-3 font-bold">المبلغ (ريال)</th>
+              <th class="px-4 py-3 font-bold">ملاحظات</th>
+              <th class="px-4 py-3 font-bold text-center">إجراء</th>
+            </tr>
+          </thead>
+          <tbody id="expensesTableBody" class="divide-y divide-gray-100"></tbody>
         </table>
       </div>
     </section>
@@ -1492,6 +1515,48 @@
     </div>
   </div>
 
+  <!-- نافذة إضافة / تعديل مصروف عام -->
+  <div id="modalGeneralExpense" class="modal-backdrop fixed inset-0 bg-black/45 z-50 hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white rounded-t-3xl sm:rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-xl">
+      <div class="flex items-center justify-between mb-4">
+        <h3 id="modalExpenseTitle" class="text-lg font-extrabold text-gray-900">إضافة مصروف</h3>
+        <button type="button" class="close-modal text-gray-400 hover:text-gray-700 text-2xl font-bold leading-none">&times;</button>
+      </div>
+      <form id="formGeneralExpense" class="space-y-3.5">
+        <input type="hidden" id="expenseEditId" />
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">نوع / اسم المصروف *</label>
+          <input type="text" id="expenseTitle" required placeholder="مثال: صيانة حظيرة، نقل، كهرباء..." class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm mb-2" />
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" data-exp-chip="صيانة حظيرة" class="exp-chip-btn px-2.5 py-1 rounded-lg border border-gray-200 bg-gray-50 hover:bg-emerald-50 text-xs font-bold">صيانة حظيرة</button>
+            <button type="button" data-exp-chip="نقل وتوصيل" class="exp-chip-btn px-2.5 py-1 rounded-lg border border-gray-200 bg-gray-50 hover:bg-emerald-50 text-xs font-bold">نقل وتوصيل</button>
+            <button type="button" data-exp-chip="مستلزمات ومعدات" class="exp-chip-btn px-2.5 py-1 rounded-lg border border-gray-200 bg-gray-50 hover:bg-emerald-50 text-xs font-bold">مستلزمات</button>
+            <button type="button" data-exp-chip="كهرباء ووقود" class="exp-chip-btn px-2.5 py-1 rounded-lg border border-gray-200 bg-gray-50 hover:bg-emerald-50 text-xs font-bold">كهرباء ووقود</button>
+            <button type="button" data-exp-chip="إيجار" class="exp-chip-btn px-2.5 py-1 rounded-lg border border-gray-200 bg-gray-50 hover:bg-emerald-50 text-xs font-bold">إيجار</button>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">المبلغ (ريال) *</label>
+            <input type="number" id="expenseAmount" required min="0.5" step="0.5" placeholder="مثال: 250" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">تاريخ الصرف *</label>
+            <input type="hidden" id="expenseDate" data-date-required="1" /><button type="button" class="date-trigger-btn" data-date-for="expenseDate"><span class="date-trigger-label text-gray-500">اختر التاريخ</span><svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></button>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">ملاحظات</label>
+          <input type="text" id="expenseNotes" placeholder="تفاصيل إضافية (اختياري)" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm" />
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" class="close-modal px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-bold text-gray-600">إلغاء</button>
+          <button type="submit" class="btn-primary px-6 py-2.5 rounded-xl text-sm font-bold">حفظ المصروف</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- نافذة المستشار الذكي لمغنم -->
   <div id="modalAiAdvisor" class="modal-backdrop fixed inset-0 bg-black/45 z-50 hidden items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white rounded-t-3xl sm:rounded-2xl max-w-xl w-full p-5 sm:p-6 shadow-2xl max-h-[90vh] flex flex-col">
@@ -1592,7 +1657,7 @@
           <div>
             <div class="flex items-center gap-2">
               <h3 class="text-base font-extrabold text-gray-900">إعدادات تطبيق مغنم</h3>
-              <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">V3.0</span>
+              <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">V3.1</span>
             </div>
             <p class="text-xs text-gray-500">المزامنة السحابية بين الجوالات والذكاء الاصطناعي</p>
           </div>
@@ -1934,6 +1999,7 @@
       water: [],
       weights: [],
       salaries: [],
+      expenses: [],
       customFeeds: [],
       customBreeds: [],
       customMedicines: [],
@@ -1959,6 +2025,7 @@
             water: Array.isArray(parsed.water) ? parsed.water : [],
             weights: Array.isArray(parsed.weights) ? parsed.weights : [],
             salaries: Array.isArray(parsed.salaries) ? parsed.salaries : [],
+            expenses: Array.isArray(parsed.expenses) ? parsed.expenses : [],
             customFeeds: Array.isArray(parsed.customFeeds) ? parsed.customFeeds : [],
             customBreeds: Array.isArray(parsed.customBreeds) ? parsed.customBreeds : [],
             customMedicines: Array.isArray(parsed.customMedicines) ? parsed.customMedicines : [],
@@ -2054,6 +2121,7 @@
         water: state.water || [],
         weights: state.weights || [],
         salaries: state.salaries || [],
+        expenses: state.expenses || [],
         customFeeds: state.customFeeds || [],
         customBreeds: state.customBreeds || [],
         customMedicines: state.customMedicines || [],
@@ -2115,6 +2183,7 @@
         water: Array.isArray(remote.water) ? remote.water : [],
         weights: Array.isArray(remote.weights) ? remote.weights : [],
         salaries: Array.isArray(remote.salaries) ? remote.salaries : [],
+        expenses: Array.isArray(remote.expenses) ? remote.expenses : [],
         customFeeds: Array.isArray(remote.customFeeds) ? remote.customFeeds : [],
         customBreeds: Array.isArray(remote.customBreeds) ? remote.customBreeds : [],
         customMedicines: Array.isArray(remote.customMedicines) ? remote.customMedicines : [],
@@ -2778,6 +2847,9 @@
       (state.salaries || []).forEach(sl => {
         if (sl.date === iso) items.push({ kind: 'salary', label: 'راتب عامل: ' + sl.workerName, sub: sl.notes || '', cost: Number(sl.cost) || 0 });
       });
+      (state.expenses || []).forEach(ex => {
+        if (ex.date === iso) items.push({ kind: 'expense', label: 'مصروف: ' + ex.title, sub: ex.notes || '', cost: Number(ex.cost) || 0 });
+      });
       return items;
     }
 
@@ -2900,9 +2972,10 @@
       const cWater = sumBy(state.water, 'date');
       const cHealth = sumBy(state.health, 'date');
       const cSalaries = sumBy(state.salaries || [], 'date');
+      const cExpenses = sumBy(state.expenses || [], 'date');
       const cBreeding = sumBy(state.breeding, 'dueDate');
       const cWeights = sumBy(state.weights, 'date');
-      const total = cFeed + cWater + cHealth + cSalaries + cBreeding + cWeights;
+      const total = cFeed + cWater + cHealth + cSalaries + cExpenses + cBreeding + cWeights;
 
       const soldInPeriod = state.herd.filter(a => a.status === 'مباع' && (parseFloat(a.salePrice) || 0) > 0 && inPeriod(a.saleDate || a.birthDate || todayISO()));
       const totalSales = soldInPeriod.reduce((sum, a) => sum + (parseFloat(a.salePrice) || 0), 0);
@@ -2967,11 +3040,15 @@
         }
       }
 
+      const elExpBadge = document.getElementById('budgetExpenseTotalBadge');
+      if (elExpBadge) elExpBadge.textContent = `${fmt(cExpenses)} ريال`;
+
       const cats = [
         { label: 'التغذية والأعلاف', val: cFeed, cls: 'bg-stone-50 border-stone-200 text-stone-900' },
         { label: 'الأدوية والصحة', val: cHealth, cls: 'bg-blue-50 border-blue-200 text-blue-900' },
         { label: 'إدارة المياه', val: cWater, cls: 'bg-cyan-50 border-cyan-200 text-cyan-900' },
         { label: 'رواتب العمال', val: cSalaries, cls: 'bg-rose-50 border-rose-200 text-rose-900' },
+        { label: 'مصروفات عامة', val: cExpenses, cls: 'bg-orange-50 border-orange-200 text-orange-900' },
         { label: 'الحمل والولادة', val: cBreeding, cls: 'bg-amber-50 border-amber-200 text-amber-900' },
         { label: 'التسمين والأوزان', val: cWeights, cls: 'bg-purple-50 border-purple-200 text-purple-900' }
       ];
@@ -3015,7 +3092,72 @@
           `).join('');
         }
       }
+
+      const expTbody = document.getElementById('expensesTableBody');
+      const exps = (state.expenses || []).filter(x => inPeriod(x.date)).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      if (expTbody) {
+        if (exps.length === 0) {
+          expTbody.innerHTML = '<tr><td colspan="5" class="p-6 text-center text-gray-400">لا توجد مصروفات عامة مسجلة بعد.</td></tr>';
+        } else {
+          expTbody.innerHTML = exps.map(ex => `
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-3"><span class="date-badge">${escapeHtml(formatArabicDate(ex.date))}</span></td>
+              <td class="px-4 py-3 font-bold text-gray-900">${escapeHtml(ex.title)}</td>
+              <td class="px-4 py-3 font-extrabold text-rose-700">${ex.cost} ريال</td>
+              <td class="px-4 py-3 text-gray-500">${escapeHtml(ex.notes || '—')}</td>
+              <td class="px-4 py-3 text-center">
+                <div class="inline-flex items-center gap-2">
+                  <button type="button" data-edit-expense="${escapeHtml(ex.id)}" class="text-xs font-bold text-emerald-700 hover:underline">تعديل</button>
+                  <button type="button" data-delete-expense="${escapeHtml(ex.id)}" class="text-xs font-bold text-red-600 hover:underline">حذف</button>
+                </div>
+              </td>
+            </tr>
+          `).join('');
+        }
+      }
     }
+
+    function resetExpenseForm() {
+      document.getElementById('formGeneralExpense').reset();
+      document.getElementById('expenseEditId').value = '';
+      document.getElementById('modalExpenseTitle').textContent = 'إضافة مصروف';
+      setDateValue('expenseDate', todayISO());
+    }
+
+    document.querySelectorAll('.exp-chip-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.getElementById('expenseTitle').value = btn.getAttribute('data-exp-chip');
+      });
+    });
+
+    document.getElementById('btnOpenAddExpense').addEventListener('click', () => {
+      resetExpenseForm();
+      openModal('modalGeneralExpense');
+    });
+
+    document.getElementById('formGeneralExpense').addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!Array.isArray(state.expenses)) state.expenses = [];
+      const editId = document.getElementById('expenseEditId').value.trim();
+      const record = {
+        id: editId || ('exp_' + Date.now()),
+        title: document.getElementById('expenseTitle').value.trim(),
+        cost: parseFloat(document.getElementById('expenseAmount').value) || 0,
+        date: document.getElementById('expenseDate').value,
+        notes: document.getElementById('expenseNotes').value.trim()
+      };
+      if (editId) {
+        const idx = state.expenses.findIndex(x => x.id === editId);
+        if (idx !== -1) state.expenses[idx] = record;
+        showToast('تم تحديث المصروف.');
+      } else {
+        state.expenses.unshift(record);
+        showToast('تم تسجيل المصروف بنجاح.');
+      }
+      saveState();
+      renderAll();
+      closeAllModals();
+    });
 
     function resetSalaryForm() {
       document.getElementById('formSalary').reset();
@@ -4686,6 +4828,28 @@
         return;
       }
 
+      const editExpense = e.target.getAttribute('data-edit-expense');
+      if (editExpense) {
+        const ex = (state.expenses || []).find(x => x.id === editExpense);
+        if (ex) {
+          document.getElementById('expenseEditId').value = ex.id;
+          document.getElementById('modalExpenseTitle').textContent = 'تعديل مصروف';
+          document.getElementById('expenseTitle').value = ex.title || '';
+          document.getElementById('expenseAmount').value = ex.cost || '';
+          setDateValue('expenseDate', ex.date || '');
+          document.getElementById('expenseNotes').value = ex.notes || '';
+          openModal('modalGeneralExpense');
+        }
+        return;
+      }
+
+      const delExpense = e.target.getAttribute('data-delete-expense');
+      if (delExpense) {
+        state.expenses = (state.expenses || []).filter(x => x.id !== delExpense);
+        saveState(); renderAll(); showToast('تم حذف المصروف.');
+        return;
+      }
+
       const delSalary = e.target.getAttribute('data-delete-salary');
       if (delSalary) {
         state.salaries = (state.salaries || []).filter(x => x.id !== delSalary);
@@ -4981,6 +5145,7 @@
               water: parsed.water || [],
               weights: parsed.weights || [],
               salaries: Array.isArray(parsed.salaries) ? parsed.salaries : [],
+            expenses: Array.isArray(parsed.expenses) ? parsed.expenses : [],
               customFeeds: Array.isArray(parsed.customFeeds) ? parsed.customFeeds : [],
               customBreeds: Array.isArray(parsed.customBreeds) ? parsed.customBreeds : [],
               customMedicines: Array.isArray(parsed.customMedicines) ? parsed.customMedicines : [],
@@ -5404,11 +5569,12 @@
       const costWater = sumCost(state.water);
       const costWeights = sumCost(state.weights);
       const costSalaries = sumCost(state.salaries || []);
-      const totalCost = costHealth + costBreeding + costFeed + costWater + costWeights + costSalaries;
+      const costExpenses = sumCost(state.expenses || []);
+      const totalCost = costHealth + costBreeding + costFeed + costWater + costWeights + costSalaries + costExpenses;
 
       const now = new Date();
       const ym = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-      const monthCost = [...state.health, ...state.breeding, ...state.feed, ...state.water, ...state.weights, ...(state.salaries || [])]
+      const monthCost = [...state.health, ...state.breeding, ...state.feed, ...state.water, ...state.weights, ...(state.salaries || []), ...(state.expenses || [])]
         .filter(x => (x.date || x.dueDate || '').startsWith(ym))
         .reduce((s, x) => s + (parseFloat(x.cost) || 0), 0);
 
@@ -5439,11 +5605,12 @@
       const costWater = sumCost(state.water);
       const costWeights = sumCost(state.weights);
       const costSalaries = sumCost(state.salaries || []);
-      const totalCost = costHealth + costBreeding + costFeed + costWater + costWeights + costSalaries;
+      const costExpenses = sumCost(state.expenses || []);
+      const totalCost = costHealth + costBreeding + costFeed + costWater + costWeights + costSalaries + costExpenses;
 
       const now = new Date();
       const ym = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-      const monthCost = [...state.health, ...state.breeding, ...state.feed, ...state.water, ...state.weights, ...(state.salaries || [])]
+      const monthCost = [...state.health, ...state.breeding, ...state.feed, ...state.water, ...state.weights, ...(state.salaries || []), ...(state.expenses || [])]
         .filter(x => (x.date || x.dueDate || '').startsWith(ym))
         .reduce((s, x) => s + (parseFloat(x.cost) || 0), 0);
 
@@ -5736,4 +5903,4 @@ ${buildMaghnamAiContext()}`;
     renderAll();
   </script>
 </body>
-  </html>
+</html>
