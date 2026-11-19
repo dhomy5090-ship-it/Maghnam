@@ -12,7 +12,7 @@
   <link id="pwaIconLink" rel="icon" type="image/png" href="" />
   <link id="pwaAppleTouchIcon" rel="apple-touch-icon" href="" />
   <link id="pwaManifestLink" rel="manifest" href="data:application/manifest+json,{}" />
-  <title>مغنم V2.8 | إدارة الحلال والأغنام</title>
+  <title>مغنم V3.0 | إدارة الحلال والأغنام</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-app-compat.js"></script>
@@ -198,6 +198,10 @@
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
           <span id="notifBadgeCount" class="hidden absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-extrabold flex items-center justify-center shadow">0</span>
         </button>
+        <button type="button" id="btnHeaderBudget" class="h-9 sm:h-10 px-3 sm:px-3.5 rounded-xl bg-emerald-400/20 hover:bg-emerald-400/30 text-emerald-100 border border-emerald-300/35 text-xs sm:text-sm font-extrabold flex items-center gap-1.5 transition" title="الميزانية والمصروفات">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span>الميزانية</span>
+        </button>
         <button type="button" id="btnHeaderCalendar" class="h-9 sm:h-10 px-3 sm:px-3.5 rounded-xl bg-amber-400/20 hover:bg-amber-400/30 text-amber-200 border border-amber-300/35 text-xs sm:text-sm font-extrabold flex items-center gap-1.5 transition" title="التقويم الشهري">
           <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
           <span>التقويم</span>
@@ -220,6 +224,7 @@
         <button type="button" data-tab="breeding" class="nav-tab tab-inactive px-3.5 py-1.5 rounded-xl border text-xs lg:text-sm font-bold">الحمل والولادة</button>
         <button type="button" data-tab="feedwater" class="nav-tab tab-inactive px-3.5 py-1.5 rounded-xl border text-xs lg:text-sm font-bold">التغذية والمياه</button>
         <button type="button" data-tab="weights" class="nav-tab tab-inactive px-3.5 py-1.5 rounded-xl border text-xs lg:text-sm font-bold">التسمين والأوزان</button>
+        <button type="button" data-tab="budget" class="nav-tab tab-inactive px-3.5 py-1.5 rounded-xl border text-xs lg:text-sm font-bold">الميزانية والمصروفات</button>
         <button type="button" data-tab="calendar" class="nav-tab tab-inactive px-3.5 py-1.5 rounded-xl border text-xs lg:text-sm font-bold">التقويم</button>
       </div>
     </nav>
@@ -283,6 +288,9 @@
           </button>
           <button type="button" data-goto="weights" data-open-modal="modalWeight" class="p-3.5 rounded-xl border border-purple-200 bg-purple-50/70 hover:bg-purple-100 text-right transition">
             <p class="font-bold text-purple-900 text-sm">+ تسجيل وزن جديد</p>
+          </button>
+          <button type="button" id="btnQuickAddWorkerSalary" class="col-span-2 sm:col-span-3 p-3.5 rounded-xl border border-rose-200 bg-rose-50/80 hover:bg-rose-100 text-center transition">
+            <p class="font-extrabold text-rose-900 text-sm">+ إضافة راتب عامل</p>
           </button>
         </div>
       </div>
@@ -609,6 +617,108 @@
       </div>
     </section>
 
+    <!-- قسم: الميزانية والمصروفات وتكلفة الرأس -->
+    <section id="tab-budget" class="tab-section hidden space-y-4">
+      <div class="md:hidden">
+        <button type="button" data-back-home="1" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-gray-200 text-sm font-bold text-gray-700 hover:bg-gray-50 shadow-sm">
+          <svg class="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          <span>العودة للرئيسية</span>
+        </button>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-xl font-extrabold text-gray-900">الميزانية والمصروفات والأرباح</h2>
+          <p class="text-sm text-gray-500">حساب تكلفة الرأس على السنة المالية (تتصفر كل سنة) مع تتبع المبيعات وصافي الربح</p>
+        </div>
+        <button type="button" id="btnOpenAddSalary" class="btn-primary px-4 py-2.5 rounded-xl text-sm font-bold">+ إضافة راتب عامل</button>
+      </div>
+
+      <div class="card-soft p-2.5 flex flex-wrap items-center justify-between gap-2">
+        <div class="inline-flex items-center gap-1.5">
+          <button type="button" data-budget-period="year" class="budget-period-btn px-3.5 py-1.5 rounded-xl bg-emerald-700 text-white text-xs font-extrabold transition">السنة المالية</button>
+          <button type="button" data-budget-period="all" class="budget-period-btn px-3.5 py-1.5 rounded-xl text-gray-600 hover:bg-gray-100 text-xs font-bold transition">الإجمالي الكلي</button>
+        </div>
+        <div id="budgetYearSelectorWrap" class="flex items-center gap-1.5">
+          <span class="text-xs font-bold text-gray-500">السنة:</span>
+          <select id="budgetFiscalYearSelect" class="px-2.5 py-1 rounded-xl border border-emerald-200 bg-emerald-50/70 text-xs font-extrabold text-emerald-950"></select>
+        </div>
+      </div>
+
+      <!-- بطاقات الملخص المالي والأرباح -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
+        <div class="card-soft p-3.5 sm:p-4 bg-gradient-to-br from-rose-50 to-white border-rose-200">
+          <p class="text-xs font-bold text-rose-700">إجمالي المصروفات</p>
+          <p id="budgetTotalSpend" class="text-lg sm:text-2xl font-extrabold text-rose-900 mt-1">0 ريال</p>
+          <p id="budgetPeriodHint" class="text-[11px] text-rose-600 mt-0.5">السنة المالية الحالية</p>
+        </div>
+        <div class="card-soft p-3.5 sm:p-4 bg-gradient-to-br from-emerald-50 to-white border-emerald-200">
+          <p class="text-xs font-bold text-emerald-700">إجمالي المبيعات</p>
+          <p id="budgetTotalSales" class="text-lg sm:text-2xl font-extrabold text-emerald-900 mt-1">0 ريال</p>
+          <p id="budgetSoldCountHint" class="text-[11px] text-emerald-700 mt-0.5">0 رأس مباع</p>
+        </div>
+        <div id="budgetProfitCard" class="card-soft p-3.5 sm:p-4 bg-gradient-to-br from-teal-50 to-white border-teal-200">
+          <p class="text-xs font-bold text-teal-800">صافي الربح / الفرق</p>
+          <p id="budgetNetProfit" class="text-lg sm:text-2xl font-extrabold text-teal-900 mt-1">0 ريال</p>
+          <p id="budgetProfitHint" class="text-[11px] text-teal-700 mt-0.5">المبيعات ناقص المصروفات</p>
+        </div>
+        <div class="card-soft p-3.5 sm:p-4 bg-gradient-to-br from-amber-50 to-white border-amber-200">
+          <p class="text-xs font-bold text-amber-800">تكلفة الرأس الواحد</p>
+          <p id="budgetCostPerHead" class="text-lg sm:text-2xl font-extrabold text-amber-950 mt-1">0 ريال</p>
+          <p id="budgetActiveHerdHint" class="text-[11px] text-amber-700 mt-0.5">مقسوماً على 0 رأس</p>
+        </div>
+      </div>
+
+      <!-- تفصيل المصروفات حسب البند -->
+      <div class="card-soft p-4 sm:p-5 space-y-3">
+        <h3 class="text-base font-extrabold text-gray-900">توزيع المصروفات حسب البند</h3>
+        <div id="budgetBreakdownGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5"></div>
+      </div>
+
+      <!-- سجل مبيعات الحلال -->
+      <div class="card-soft overflow-x-auto">
+        <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+          <div>
+            <h3 class="text-sm sm:text-base font-extrabold text-gray-900">سجل مبيعات الحلال</h3>
+            <p class="text-[11px] text-gray-500">يُضاف تلقائياً عند تغيير حالة أي رأس إلى «مباع» مع تسجيل سعر البيع</p>
+          </div>
+          <span id="budgetSalesTotalBadge" class="text-xs font-extrabold text-emerald-700 shrink-0">0 ريال</span>
+        </div>
+        <table class="w-full text-sm text-right">
+          <thead class="bg-gray-50 text-gray-600 border-b border-gray-200">
+            <tr>
+              <th class="px-4 py-3 font-bold">رقم الرأس</th>
+              <th class="px-4 py-3 font-bold">السلالة</th>
+              <th class="px-4 py-3 font-bold">تاريخ البيع</th>
+              <th class="px-4 py-3 font-bold">سعر البيع</th>
+              <th class="px-4 py-3 font-bold text-center">إجراء</th>
+            </tr>
+          </thead>
+          <tbody id="salesTableBody" class="divide-y divide-gray-100"></tbody>
+        </table>
+      </div>
+
+      <!-- سجل رواتب العمال -->
+      <div class="card-soft overflow-x-auto">
+        <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+          <h3 class="text-sm sm:text-base font-extrabold text-gray-900">سجل رواتب العمال</h3>
+          <span id="budgetSalaryTotalBadge" class="text-xs font-extrabold text-rose-700">0 ريال</span>
+        </div>
+        <table class="w-full text-sm text-right">
+          <thead class="bg-gray-50 text-gray-600 border-b border-gray-200">
+            <tr>
+              <th class="px-4 py-3 font-bold">التاريخ</th>
+              <th class="px-4 py-3 font-bold">اسم العامل</th>
+              <th class="px-4 py-3 font-bold">المبلغ (ريال)</th>
+              <th class="px-4 py-3 font-bold">ملاحظات</th>
+              <th class="px-4 py-3 font-bold text-center">إجراء</th>
+            </tr>
+          </thead>
+          <tbody id="salariesTableBody" class="divide-y divide-gray-100"></tbody>
+        </table>
+      </div>
+    </section>
+
     <!-- قسم: التقويم الشهري للأحداث والمواعيد -->
     <section id="tab-calendar" class="tab-section hidden space-y-4">
       <div class="md:hidden">
@@ -794,6 +904,16 @@
               <button type="button" data-chip-val="تسمين" class="px-2.5 py-1 rounded-lg border text-xs font-bold">تسمين</button>
               <button type="button" data-chip-val="مباع" class="px-2.5 py-1 rounded-lg border text-xs font-bold">مباع</button>
             </div>
+          </div>
+        </div>
+        <div id="animalSaleBox" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 bg-emerald-50/80 p-3 rounded-xl border border-emerald-200">
+          <div>
+            <label class="block text-xs font-bold text-emerald-900 mb-1">سعر البيع (ريال) *</label>
+            <input type="number" id="animalSalePrice" min="0" step="0.5" placeholder="مثال: 1450" class="w-full px-3 py-2 rounded-xl border border-emerald-200 text-sm bg-white" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-emerald-900 mb-1">تاريخ البيع</label>
+            <input type="hidden" id="animalSaleDate" /><button type="button" class="date-trigger-btn" data-date-for="animalSaleDate"><span class="date-trigger-label text-gray-500">اختر التاريخ</span><svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></button>
           </div>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-emerald-50/60 p-3 rounded-xl border border-emerald-100">
@@ -1337,6 +1457,41 @@
     </div>
   </div>
 
+  <!-- نافذة إضافة / تعديل راتب عامل -->
+  <div id="modalSalary" class="modal-backdrop fixed inset-0 bg-black/45 z-50 hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white rounded-t-3xl sm:rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-xl">
+      <div class="flex items-center justify-between mb-4">
+        <h3 id="modalSalaryTitle" class="text-lg font-extrabold text-gray-900">إضافة راتب عامل</h3>
+        <button type="button" class="close-modal text-gray-400 hover:text-gray-700 text-2xl font-bold leading-none">&times;</button>
+      </div>
+      <form id="formSalary" class="space-y-3.5">
+        <input type="hidden" id="salaryEditId" />
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">اسم العامل / الوصف *</label>
+          <input type="text" id="salaryWorkerName" required placeholder="مثال: راتب الراعي، أو اسم العامل" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">المبلغ (ريال) *</label>
+            <input type="number" id="salaryAmount" required min="1" step="0.5" placeholder="مثال: 1500" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">تاريخ الصرف *</label>
+            <input type="hidden" id="salaryDate" data-date-required="1" /><button type="button" class="date-trigger-btn" data-date-for="salaryDate"><span class="date-trigger-label text-gray-500">اختر التاريخ</span><svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></button>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">ملاحظات</label>
+          <input type="text" id="salaryNotes" placeholder="مثال: راتب شهر نوفمبر، أو مصروف إضافي" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm" />
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" class="close-modal px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-bold text-gray-600">إلغاء</button>
+          <button type="submit" class="btn-primary px-6 py-2.5 rounded-xl text-sm font-bold">حفظ الراتب</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- نافذة المستشار الذكي لمغنم -->
   <div id="modalAiAdvisor" class="modal-backdrop fixed inset-0 bg-black/45 z-50 hidden items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white rounded-t-3xl sm:rounded-2xl max-w-xl w-full p-5 sm:p-6 shadow-2xl max-h-[90vh] flex flex-col">
@@ -1437,7 +1592,7 @@
           <div>
             <div class="flex items-center gap-2">
               <h3 class="text-base font-extrabold text-gray-900">إعدادات تطبيق مغنم</h3>
-              <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">V2.8</span>
+              <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">V3.0</span>
             </div>
             <p class="text-xs text-gray-500">المزامنة السحابية بين الجوالات والذكاء الاصطناعي</p>
           </div>
@@ -1581,6 +1736,10 @@
               <option value="مباع">مباع</option>
             </select>
           </div>
+        </div>
+        <div id="bulkEditSaleBox" class="hidden bg-emerald-50/80 p-3 rounded-xl border border-emerald-200">
+          <label class="block text-xs font-bold text-emerald-900 mb-1">سعر البيع للرأس الواحد (ريال)</label>
+          <input type="number" id="bulkEditSalePrice" min="0" step="0.5" placeholder="مثال: 1300" class="w-full px-3 py-2 rounded-xl border border-emerald-200 text-sm bg-white" />
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
@@ -1774,6 +1933,7 @@
       feed: [],
       water: [],
       weights: [],
+      salaries: [],
       customFeeds: [],
       customBreeds: [],
       customMedicines: [],
@@ -1798,6 +1958,7 @@
             feed: Array.isArray(parsed.feed) ? parsed.feed : [],
             water: Array.isArray(parsed.water) ? parsed.water : [],
             weights: Array.isArray(parsed.weights) ? parsed.weights : [],
+            salaries: Array.isArray(parsed.salaries) ? parsed.salaries : [],
             customFeeds: Array.isArray(parsed.customFeeds) ? parsed.customFeeds : [],
             customBreeds: Array.isArray(parsed.customBreeds) ? parsed.customBreeds : [],
             customMedicines: Array.isArray(parsed.customMedicines) ? parsed.customMedicines : [],
@@ -1892,6 +2053,7 @@
         feed: state.feed || [],
         water: state.water || [],
         weights: state.weights || [],
+        salaries: state.salaries || [],
         customFeeds: state.customFeeds || [],
         customBreeds: state.customBreeds || [],
         customMedicines: state.customMedicines || [],
@@ -1952,6 +2114,7 @@
         feed: Array.isArray(remote.feed) ? remote.feed : [],
         water: Array.isArray(remote.water) ? remote.water : [],
         weights: Array.isArray(remote.weights) ? remote.weights : [],
+        salaries: Array.isArray(remote.salaries) ? remote.salaries : [],
         customFeeds: Array.isArray(remote.customFeeds) ? remote.customFeeds : [],
         customBreeds: Array.isArray(remote.customBreeds) ? remote.customBreeds : [],
         customMedicines: Array.isArray(remote.customMedicines) ? remote.customMedicines : [],
@@ -2104,6 +2267,9 @@
       }
       if (tabName === 'calendar') {
         renderMainCalendar();
+      }
+      if (tabName === 'budget') {
+        renderBudget();
       }
     }
 
@@ -2307,6 +2473,7 @@
                     <span class="mx-0.5 text-gray-300">|</span>
                     <span class="font-bold text-gray-800">الأب:</span> ${a.fatherId ? escapeHtml(a.fatherId) : '—'}
                   </p>
+                  ${a.status === 'مباع' && a.salePrice > 0 ? `<p class="text-emerald-700 font-extrabold">سعر البيع: ${a.salePrice} ريال</p>` : ''}
                   ${children.length > 0 ? `<p class="text-emerald-700 font-bold truncate">المواليد: ${children.map(c => c.id).join('، ')}</p>` : ''}
                 </div>
                 ${a.notes ? `<p class="text-[11px] text-gray-500 line-clamp-2">${escapeHtml(a.notes)}</p>` : ''}
@@ -2608,6 +2775,9 @@
       state.weights.forEach(w => {
         if (w.date === iso) items.push({ kind: 'weight', label: 'وزن رقم ' + w.animalId, sub: w.weight + ' كجم', cost: Number(w.cost) || 0 });
       });
+      (state.salaries || []).forEach(sl => {
+        if (sl.date === iso) items.push({ kind: 'salary', label: 'راتب عامل: ' + sl.workerName, sub: sl.notes || '', cost: Number(sl.cost) || 0 });
+      });
       return items;
     }
 
@@ -2692,6 +2862,216 @@
       if (mSpendEl) mSpendEl.textContent = `مصروفات هذا الشهر: ${monthTotalSpend} ريال`;
     }
 
+    let budgetPeriodMode = 'year';
+    let budgetFiscalYear = String(new Date().getFullYear());
+
+    function populateBudgetYearSelect() {
+      const sel = document.getElementById('budgetFiscalYearSelect');
+      if (!sel) return;
+      const curY = new Date().getFullYear();
+      const yearsSet = new Set([String(curY), String(curY - 1), String(curY + 1)]);
+      [...state.feed, ...state.water, ...state.health, ...(state.salaries || []), ...state.weights].forEach(x => {
+        if (x.date && /^\d{4}/.test(x.date)) yearsSet.add(x.date.slice(0, 4));
+      });
+      state.herd.forEach(a => {
+        if (a.saleDate && /^\d{4}/.test(a.saleDate)) yearsSet.add(a.saleDate.slice(0, 4));
+      });
+      const sortedYears = [...yearsSet].sort((a, b) => b.localeCompare(a));
+      sel.innerHTML = sortedYears.map(y => `<option value="${y}">${y}</option>`).join('');
+      if (!sortedYears.includes(budgetFiscalYear)) budgetFiscalYear = String(curY);
+      sel.value = budgetFiscalYear;
+      syncMaghnamSelectTrigger(sel);
+    }
+
+    document.getElementById('budgetFiscalYearSelect').addEventListener('change', (e) => {
+      budgetFiscalYear = e.target.value || String(new Date().getFullYear());
+      renderBudget();
+    });
+
+    function renderBudget() {
+      populateBudgetYearSelect();
+      const yearWrap = document.getElementById('budgetYearSelectorWrap');
+      if (yearWrap) yearWrap.classList.toggle('hidden', budgetPeriodMode !== 'year');
+
+      const inPeriod = (dateStr) => budgetPeriodMode === 'all' || String(dateStr || '').startsWith(budgetFiscalYear);
+      const sumBy = (arr, dateField) => (arr || []).filter(x => inPeriod(x[dateField])).reduce((a, x) => a + (parseFloat(x.cost) || 0), 0);
+
+      const cFeed = sumBy(state.feed, 'date');
+      const cWater = sumBy(state.water, 'date');
+      const cHealth = sumBy(state.health, 'date');
+      const cSalaries = sumBy(state.salaries || [], 'date');
+      const cBreeding = sumBy(state.breeding, 'dueDate');
+      const cWeights = sumBy(state.weights, 'date');
+      const total = cFeed + cWater + cHealth + cSalaries + cBreeding + cWeights;
+
+      const soldInPeriod = state.herd.filter(a => a.status === 'مباع' && (parseFloat(a.salePrice) || 0) > 0 && inPeriod(a.saleDate || a.birthDate || todayISO()));
+      const totalSales = soldInPeriod.reduce((sum, a) => sum + (parseFloat(a.salePrice) || 0), 0);
+      const netProfit = totalSales - total;
+
+      const activeHerd = state.herd.filter(a => a.status !== 'مباع').length;
+      const totalBasisCount = activeHerd + soldInPeriod.length;
+      const denom = totalBasisCount > 0 ? totalBasisCount : state.herd.length;
+      const perHead = denom > 0 ? (total / denom) : 0;
+
+      const fmt = (n) => Number(n || 0).toLocaleString('ar-SA', { maximumFractionDigits: 2 });
+
+      const elTotal = document.getElementById('budgetTotalSpend');
+      const elHint = document.getElementById('budgetPeriodHint');
+      const elSales = document.getElementById('budgetTotalSales');
+      const elSoldHint = document.getElementById('budgetSoldCountHint');
+      const elProfit = document.getElementById('budgetNetProfit');
+      const elProfitCard = document.getElementById('budgetProfitCard');
+      const elProfitHint = document.getElementById('budgetProfitHint');
+      const elPerHead = document.getElementById('budgetCostPerHead');
+      const elHerdHint = document.getElementById('budgetActiveHerdHint');
+      const elSalBadge = document.getElementById('budgetSalaryTotalBadge');
+      const elSalesBadge = document.getElementById('budgetSalesTotalBadge');
+
+      if (elTotal) elTotal.textContent = `${fmt(total)} ريال`;
+      if (elHint) elHint.textContent = budgetPeriodMode === 'year' ? `السنة المالية ${budgetFiscalYear} (تتصفر كل سنة)` : 'إجمالي كل السنوات';
+      if (elSales) elSales.textContent = `${fmt(totalSales)} ريال`;
+      if (elSoldHint) elSoldHint.textContent = `${soldInPeriod.length} رأس مباع`;
+      if (elProfit) {
+        const sign = netProfit > 0 ? '+' : '';
+        elProfit.textContent = `${sign}${fmt(netProfit)} ريال`;
+        elProfit.className = `text-lg sm:text-2xl font-extrabold mt-1 ${netProfit >= 0 ? 'text-emerald-800' : 'text-rose-700'}`;
+      }
+      if (elProfitCard) {
+        elProfitCard.className = netProfit >= 0
+          ? 'card-soft p-3.5 sm:p-4 bg-gradient-to-br from-emerald-50 to-white border-emerald-200'
+          : 'card-soft p-3.5 sm:p-4 bg-gradient-to-br from-rose-50 to-white border-rose-200';
+      }
+      if (elProfitHint) elProfitHint.textContent = netProfit >= 0 ? 'صافي ربح' : 'مصروفات لم تُغطَّ بالمبيعات بعد';
+      if (elPerHead) elPerHead.textContent = `${fmt(perHead)} ريال`;
+      if (elHerdHint) elHerdHint.textContent = denom > 0 ? `إجمالي السنة ÷ ${denom} رأس` : 'أضف حلالاً لحساب تكلفة الرأس';
+      if (elSalBadge) elSalBadge.textContent = `${fmt(cSalaries)} ريال`;
+      if (elSalesBadge) elSalesBadge.textContent = `${fmt(totalSales)} ريال`;
+
+      const salesTbody = document.getElementById('salesTableBody');
+      if (salesTbody) {
+        const sortedSold = soldInPeriod.slice().sort((a, b) => (b.saleDate || '').localeCompare(a.saleDate || ''));
+        if (sortedSold.length === 0) {
+          salesTbody.innerHTML = '<tr><td colspan="5" class="p-6 text-center text-gray-400">لا توجد مبيعات مسجلة في هذه الفترة. لتسجيل بيع، عدّل حالة الرأس إلى «مباع» وأدخل سعر البيع.</td></tr>';
+        } else {
+          salesTbody.innerHTML = sortedSold.map(a => `
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-3 font-extrabold text-gray-900">رقم ${escapeHtml(a.id)}</td>
+              <td class="px-4 py-3 text-gray-700">${escapeHtml(a.breed)} (${escapeHtml(a.type)})</td>
+              <td class="px-4 py-3"><span class="date-badge">${escapeHtml(formatArabicDate(a.saleDate || todayISO()))}</span></td>
+              <td class="px-4 py-3 font-extrabold text-emerald-700">+${a.salePrice} ريال</td>
+              <td class="px-4 py-3 text-center">
+                <button type="button" data-edit-animal="${escapeHtml(a.id)}" class="text-xs font-bold text-emerald-700 hover:underline">تعديل</button>
+              </td>
+            </tr>
+          `).join('');
+        }
+      }
+
+      const cats = [
+        { label: 'التغذية والأعلاف', val: cFeed, cls: 'bg-stone-50 border-stone-200 text-stone-900' },
+        { label: 'الأدوية والصحة', val: cHealth, cls: 'bg-blue-50 border-blue-200 text-blue-900' },
+        { label: 'إدارة المياه', val: cWater, cls: 'bg-cyan-50 border-cyan-200 text-cyan-900' },
+        { label: 'رواتب العمال', val: cSalaries, cls: 'bg-rose-50 border-rose-200 text-rose-900' },
+        { label: 'الحمل والولادة', val: cBreeding, cls: 'bg-amber-50 border-amber-200 text-amber-900' },
+        { label: 'التسمين والأوزان', val: cWeights, cls: 'bg-purple-50 border-purple-200 text-purple-900' }
+      ];
+      const grid = document.getElementById('budgetBreakdownGrid');
+      if (grid) {
+        grid.innerHTML = cats.map(c => {
+          const pct = total > 0 ? Math.round((c.val / total) * 100) : 0;
+          const headShare = denom > 0 ? (c.val / denom) : 0;
+          return `
+            <div class="p-3 rounded-xl border ${c.cls} space-y-1">
+              <div class="flex items-center justify-between gap-1">
+                <p class="text-xs font-bold">${c.label}</p>
+                <span class="text-[10px] font-extrabold opacity-75">${pct}%</span>
+              </div>
+              <p class="text-base font-extrabold">${fmt(c.val)} ريال</p>
+              <p class="text-[10px] opacity-80">للرأس: ${fmt(headShare)} ريال</p>
+            </div>
+          `;
+        }).join('');
+      }
+
+      const tbody = document.getElementById('salariesTableBody');
+      const sals = (state.salaries || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      if (tbody) {
+        if (sals.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="p-6 text-center text-gray-400">لا توجد رواتب عمال مسجلة بعد.</td></tr>';
+        } else {
+          tbody.innerHTML = sals.map(sl => `
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-3"><span class="date-badge">${escapeHtml(formatArabicDate(sl.date))}</span></td>
+              <td class="px-4 py-3 font-bold text-gray-900">${escapeHtml(sl.workerName)}</td>
+              <td class="px-4 py-3 font-extrabold text-rose-700">${sl.cost} ريال</td>
+              <td class="px-4 py-3 text-gray-500">${escapeHtml(sl.notes || '—')}</td>
+              <td class="px-4 py-3 text-center">
+                <div class="inline-flex items-center gap-2">
+                  <button type="button" data-edit-salary="${escapeHtml(sl.id)}" class="text-xs font-bold text-emerald-700 hover:underline">تعديل</button>
+                  <button type="button" data-delete-salary="${escapeHtml(sl.id)}" class="text-xs font-bold text-red-600 hover:underline">حذف</button>
+                </div>
+              </td>
+            </tr>
+          `).join('');
+        }
+      }
+    }
+
+    function resetSalaryForm() {
+      document.getElementById('formSalary').reset();
+      document.getElementById('salaryEditId').value = '';
+      document.getElementById('modalSalaryTitle').textContent = 'إضافة راتب عامل';
+      setDateValue('salaryDate', todayISO());
+    }
+
+    document.querySelectorAll('.budget-period-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        budgetPeriodMode = btn.getAttribute('data-budget-period') || 'month';
+        document.querySelectorAll('.budget-period-btn').forEach(b => {
+          const active = b.getAttribute('data-budget-period') === budgetPeriodMode;
+          b.className = active
+            ? 'budget-period-btn px-3.5 py-1.5 rounded-xl bg-emerald-700 text-white text-xs font-extrabold transition'
+            : 'budget-period-btn px-3.5 py-1.5 rounded-xl text-gray-600 hover:bg-gray-100 text-xs font-bold transition';
+        });
+        renderBudget();
+      });
+    });
+
+    document.getElementById('btnHeaderBudget').addEventListener('click', () => switchTab('budget'));
+    document.getElementById('btnOpenAddSalary').addEventListener('click', () => {
+      resetSalaryForm();
+      openModal('modalSalary');
+    });
+    document.getElementById('btnQuickAddWorkerSalary').addEventListener('click', () => {
+      switchTab('budget');
+      resetSalaryForm();
+      openModal('modalSalary');
+    });
+
+    document.getElementById('formSalary').addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!Array.isArray(state.salaries)) state.salaries = [];
+      const editId = document.getElementById('salaryEditId').value.trim();
+      const record = {
+        id: editId || ('sal_' + Date.now()),
+        workerName: document.getElementById('salaryWorkerName').value.trim(),
+        cost: parseFloat(document.getElementById('salaryAmount').value) || 0,
+        date: document.getElementById('salaryDate').value,
+        notes: document.getElementById('salaryNotes').value.trim()
+      };
+      if (editId) {
+        const idx = state.salaries.findIndex(x => x.id === editId);
+        if (idx !== -1) state.salaries[idx] = record;
+        showToast('تم تحديث سجل راتب العامل.');
+      } else {
+        state.salaries.unshift(record);
+        showToast('تم تسجيل راتب العامل بنجاح.');
+      }
+      saveState();
+      renderAll();
+      closeAllModals();
+    });
+
     document.getElementById('btnHeaderCalendar').addEventListener('click', () => switchTab('calendar'));
     document.getElementById('mainCalPrev').addEventListener('click', () => {
       mainCalMonth--;
@@ -2714,6 +3094,7 @@
       renderWater();
       renderWeights();
       renderMainCalendar();
+      renderBudget();
       initMaghnamSelects();
     }
 
@@ -3159,10 +3540,25 @@
       syncMaghnamSelectTrigger(document.getElementById('animalType'));
       syncMaghnamSelectTrigger(document.getElementById('animalGender'));
       syncMaghnamSelectTrigger(document.getElementById('animalStatus'));
+      document.getElementById('animalSalePrice').value = '';
+      setDateValue('animalSaleDate', todayISO());
+      toggleAnimalSaleBox();
       document.getElementById('animalStageSelect').value = '';
       syncMaghnamSelectTrigger(document.getElementById('animalStageSelect'));
       updateLiveStageBadge('animalBirthDate', 'animalType', 'animalGender', 'animalStageBadge', 'animalStageSelect');
     }
+
+    function toggleAnimalSaleBox() {
+      const isSold = document.getElementById('animalStatus').value === 'مباع';
+      document.getElementById('animalSaleBox').classList.toggle('hidden', !isSold);
+      if (isSold && !document.getElementById('animalSaleDate').value) {
+        setDateValue('animalSaleDate', todayISO());
+      }
+    }
+    document.getElementById('animalStatus').addEventListener('change', toggleAnimalSaleBox);
+    document.getElementById('bulkEditStatus').addEventListener('change', (e) => {
+      document.getElementById('bulkEditSaleBox').classList.toggle('hidden', e.target.value !== 'مباع');
+    });
 
     document.getElementById('btnOpenAddAnimal').addEventListener('click', () => {
       resetAnimalForm();
@@ -3539,6 +3935,8 @@
         birthDate: document.getElementById('animalBirthDate').value,
         ageStage: document.getElementById('animalStageSelect').value || '',
         status: document.getElementById('animalStatus').value,
+        salePrice: document.getElementById('animalStatus').value === 'مباع' ? (parseFloat(document.getElementById('animalSalePrice').value) || 0) : 0,
+        saleDate: document.getElementById('animalStatus').value === 'مباع' ? (document.getElementById('animalSaleDate').value || todayISO()) : '',
         motherId: document.getElementById('animalMotherId').value.trim(),
         fatherId: document.getElementById('animalFatherId').value.trim(),
         tagColor: document.getElementById('animalTagColor').value || 'amber',
@@ -4077,6 +4475,9 @@
           syncMaghnamSelectTrigger(document.getElementById('animalStageSelect'));
           updateLiveStageBadge('animalBirthDate', 'animalType', 'animalGender', 'animalStageBadge', 'animalStageSelect');
           document.getElementById('animalStatus').value = a.status;
+          document.getElementById('animalSalePrice').value = a.salePrice > 0 ? a.salePrice : '';
+          setDateValue('animalSaleDate', a.saleDate || todayISO());
+          toggleAnimalSaleBox();
           document.getElementById('animalMotherId').value = a.motherId || '';
           document.getElementById('animalFatherId').value = a.fatherId || '';
           setTagColorUI('animalTagColor', '.tag-color-btn', 'data-tag-color', a.tagColor || 'amber');
@@ -4270,6 +4671,28 @@
         return;
       }
 
+      const editSalary = e.target.getAttribute('data-edit-salary');
+      if (editSalary) {
+        const sl = (state.salaries || []).find(x => x.id === editSalary);
+        if (sl) {
+          document.getElementById('salaryEditId').value = sl.id;
+          document.getElementById('modalSalaryTitle').textContent = 'تعديل راتب عامل';
+          document.getElementById('salaryWorkerName').value = sl.workerName || '';
+          document.getElementById('salaryAmount').value = sl.cost || '';
+          setDateValue('salaryDate', sl.date || '');
+          document.getElementById('salaryNotes').value = sl.notes || '';
+          openModal('modalSalary');
+        }
+        return;
+      }
+
+      const delSalary = e.target.getAttribute('data-delete-salary');
+      if (delSalary) {
+        state.salaries = (state.salaries || []).filter(x => x.id !== delSalary);
+        saveState(); renderAll(); showToast('تم حذف سجل الراتب.');
+        return;
+      }
+
       const delWeight = e.target.getAttribute('data-delete-weight');
       if (delWeight) {
         state.weights = state.weights.filter(x => x.id !== delWeight);
@@ -4347,6 +4770,8 @@
       breedSel.innerHTML = '<option value="">بدون تغيير</option>' + allBreeds.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join('');
       setDateValue('bulkEditBirthDate', '');
       document.getElementById('bulkEditChangeColor').checked = false;
+      document.getElementById('bulkEditSaleBox').classList.add('hidden');
+      document.getElementById('bulkEditSalePrice').value = '';
       setTagColorUI('bulkEditTagColor', '', '', 'amber');
       openModal('modalBulkEditHerd');
     });
@@ -4371,7 +4796,14 @@
         if (newType) a.type = newType;
         if (newBreed) a.breed = newBreed;
         if (newGender) a.gender = newGender;
-        if (newStatus) a.status = newStatus;
+        if (newStatus) {
+          a.status = newStatus;
+          if (newStatus === 'مباع') {
+            const sp = parseFloat(document.getElementById('bulkEditSalePrice').value) || 0;
+            if (sp > 0) a.salePrice = sp;
+            a.saleDate = todayISO();
+          }
+        }
         if (newBirth) a.birthDate = newBirth;
         if (changeColor && newColor) a.tagColor = newColor;
         updatedCount++;
@@ -4548,6 +4980,7 @@
               feed: parsed.feed || [],
               water: parsed.water || [],
               weights: parsed.weights || [],
+              salaries: Array.isArray(parsed.salaries) ? parsed.salaries : [],
               customFeeds: Array.isArray(parsed.customFeeds) ? parsed.customFeeds : [],
               customBreeds: Array.isArray(parsed.customBreeds) ? parsed.customBreeds : [],
               customMedicines: Array.isArray(parsed.customMedicines) ? parsed.customMedicines : [],
@@ -4970,11 +5403,12 @@
       const costFeed = sumCost(state.feed);
       const costWater = sumCost(state.water);
       const costWeights = sumCost(state.weights);
-      const totalCost = costHealth + costBreeding + costFeed + costWater + costWeights;
+      const costSalaries = sumCost(state.salaries || []);
+      const totalCost = costHealth + costBreeding + costFeed + costWater + costWeights + costSalaries;
 
       const now = new Date();
       const ym = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-      const monthCost = [...state.health, ...state.breeding, ...state.feed, ...state.water, ...state.weights]
+      const monthCost = [...state.health, ...state.breeding, ...state.feed, ...state.water, ...state.weights, ...(state.salaries || [])]
         .filter(x => (x.date || x.dueDate || '').startsWith(ym))
         .reduce((s, x) => s + (parseFloat(x.cost) || 0), 0);
 
@@ -5004,11 +5438,12 @@
       const costFeed = sumCost(state.feed);
       const costWater = sumCost(state.water);
       const costWeights = sumCost(state.weights);
-      const totalCost = costHealth + costBreeding + costFeed + costWater + costWeights;
+      const costSalaries = sumCost(state.salaries || []);
+      const totalCost = costHealth + costBreeding + costFeed + costWater + costWeights + costSalaries;
 
       const now = new Date();
       const ym = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-      const monthCost = [...state.health, ...state.breeding, ...state.feed, ...state.water, ...state.weights]
+      const monthCost = [...state.health, ...state.breeding, ...state.feed, ...state.water, ...state.weights, ...(state.salaries || [])]
         .filter(x => (x.date || x.dueDate || '').startsWith(ym))
         .reduce((s, x) => s + (parseFloat(x.cost) || 0), 0);
 
@@ -5301,4 +5736,4 @@ ${buildMaghnamAiContext()}`;
     renderAll();
   </script>
 </body>
-</html>
+  </html>
